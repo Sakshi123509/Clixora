@@ -1,0 +1,191 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+/* ==========================================================================
+   Clixora Global Design System
+   ========================================================================== */
+
+:root {
+  /* Color Palette */
+  --bg-primary: #FCF8FA;       /* Ultra-light soft baby pink tinted background */
+  --bg-secondary: #FFFFFF;     /* Pure white for cards, containers, sidebars */
+  
+  --primary-purple: #7B2CBF;   /* Deep vibrant purple for primary actions */
+  --primary-purple-hover: #9D4EDD;
+  --baby-pink: #FFC2D1;        /* Soft baby pink for accents and subtle highlights */
+  --baby-pink-light: #FFE5EC;  /* Lighter pink for soft backgrounds/badges */
+  
+  /* Text Colors */
+  --text-main: #24142B;        /* Deep, dark purple-grey for ultimate readability */
+  --text-muted: #6B5E73;       /* Softer tone for secondary text/subheadings */
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #FF91AF 0%, #7B2CBF 100%); /* Pink to Purple */
+  --gradient-subtle: linear-gradient(135deg, #FFE5EC 0%, #F3E8FF 100%);  /* Soft pastel mix */
+
+  /* UI Elements */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --shadow-sm: 0 2px 8px rgba(123, 44, 191, 0.04);
+  --shadow-md: 0 10px 30px rgba(123, 44, 191, 0.08);
+  --shadow-lg: 0 20px 40px rgba(123, 44, 191, 0.12);
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Reset & Base Styles
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+p {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* Helper to get that "AI Sparkle" gradient text */
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* ==========================================================================
+   Interactive Elements (Buttons & Links)
+   ========================================================================== */
+a {
+  color: var(--primary-purple);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--primary-purple-hover);
+}
+
+/* Primary Vibrant Button */
+.btn-primary {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: var(--primary-purple);
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(123, 44, 191, 0.3);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background: var(--primary-purple-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 44, 191, 0.4);
+}
+
+/* Accent/Secondary Pink Button */
+.btn-secondary {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: var(--baby-pink-light);
+  color: var(--primary-purple);
+  border: 1px solid var(--baby-pink);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-secondary:hover {
+  background: var(--baby-pink);
+  color: var(--text-main);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Layout Components (Cards, Inputs, Badges)
+   ========================================================================== */
+
+/* UI Cards (Perfect for thumbnail workspace panels or templates) */
+.card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid rgba(255, 194, 209, 0.3); /* Subtle baby pink border */
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--baby-pink);
+}
+
+/* Beautiful Input Fields for AI Prompts */
+.input-field {
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  padding: 14px 16px;
+  background-color: var(--bg-primary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  transition: var(--transition);
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: var(--primary-purple);
+  background-color: var(--bg-secondary);
+  box-shadow: 0 0 0 4px rgba(123, 44, 191, 0.1);
+}
+
+/* "AI Feature" or "Premium" Badges */
+.badge {
+  display: inline-flex;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-subtle);
+  color: var(--primary-purple);
+  border: 1px solid rgba(123, 44, 191, 0.1);
+}
