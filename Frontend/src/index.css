@@ -1,191 +1,577 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
-/* ==========================================================================
-   Clixora Global Design System
-   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Color Palette */
-  --bg-primary: #FCF8FA;       /* Ultra-light soft baby pink tinted background */
-  --bg-secondary: #FFFFFF;     /* Pure white for cards, containers, sidebars */
-  
-  --primary-purple: #7B2CBF;   /* Deep vibrant purple for primary actions */
-  --primary-purple-hover: #9D4EDD;
-  --baby-pink: #FFC2D1;        /* Soft baby pink for accents and subtle highlights */
-  --baby-pink-light: #FFE5EC;  /* Lighter pink for soft backgrounds/badges */
-  
-  /* Text Colors */
-  --text-main: #24142B;        /* Deep, dark purple-grey for ultimate readability */
-  --text-muted: #6B5E73;       /* Softer tone for secondary text/subheadings */
-  
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #FF91AF 0%, #7B2CBF 100%); /* Pink to Purple */
-  --gradient-subtle: linear-gradient(135deg, #FFE5EC 0%, #F3E8FF 100%);  /* Soft pastel mix */
+  /* =========================
+     COLORS
+  ========================= */
 
-  /* UI Elements */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 24px;
-  --shadow-sm: 0 2px 8px rgba(123, 44, 191, 0.04);
-  --shadow-md: 0 10px 30px rgba(123, 44, 191, 0.08);
-  --shadow-lg: 0 20px 40px rgba(123, 44, 191, 0.12);
-  
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --text: #7b6d85;
+  --text-h: #3d1f52;
+
+  --bg: linear-gradient(135deg, #fff4fa 0%, #f7e8ff 45%, #f3ddff 100%);
+  --card-bg: rgba(255, 255, 255, 0.45);
+
+  --border: rgba(255, 255, 255, 0.4);
+
+  --code-bg: rgba(255, 255, 255, 0.65);
+
+  --accent: #d946ef;
+
+  --accent-2: #8b5cf6;
+
+  --accent-bg: rgba(217, 70, 239, 0.12);
+
+  --accent-border: rgba(217, 70, 239, 0.3);
+
+  --social-bg: rgba(255, 255, 255, 0.7);
+
+  --shadow:
+    0 10px 30px rgba(217, 70, 239, 0.12), 0 6px 18px rgba(139, 92, 246, 0.1);
+
+  /* =========================
+     FONTS
+  ========================= */
+
+  --sans: "Poppins", system-ui, sans-serif;
+
+  --heading: "Poppins", system-ui, sans-serif;
+
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+
+  letter-spacing: 0.18px;
+
+  color: var(--text);
+
+  background: var(--bg);
+
+  font-synthesis: none;
+
+  text-rendering: optimizeLegibility;
+
+  -webkit-font-smoothing: antialiased;
+
+  -moz-osx-font-smoothing: grayscale;
+
+  overflow-x: hidden;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
 }
 
-/* ==========================================================================
-   Reset & Base Styles
-   ========================================================================== */
-*, *::before, *::after {
+/* =========================
+   DARK MODE
+========================= */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #d6cde2;
+
+    --text-h: #ffffff;
+
+    --bg: linear-gradient(135deg, #1b1026 0%, #24143a 50%, #31124d 100%);
+
+    --card-bg: rgba(33, 20, 48, 0.6);
+
+    --border: rgba(255, 255, 255, 0.08);
+
+    --code-bg: rgba(255, 255, 255, 0.05);
+
+    --accent: #f472ff;
+
+    --accent-2: #a855f7;
+
+    --accent-bg: rgba(244, 114, 255, 0.15);
+
+    --accent-border: rgba(244, 114, 255, 0.3);
+
+    --social-bg: rgba(255, 255, 255, 0.08);
+
+    --shadow:
+      0 10px 40px rgba(0, 0, 0, 0.35), 0 4px 20px rgba(168, 85, 247, 0.15);
+  }
+}
+
+/* =========================
+   BODY
+========================= */
+
+body {
+  margin: 0;
+
+  min-height: 100vh;
+
+  background: var(--bg);
+
+  position: relative;
+}
+
+/* background glow */
+
+body::before {
+  content: "";
+
+  position: fixed;
+
+  width: 400px;
+  height: 400px;
+
+  background: rgba(255, 105, 180, 0.18);
+
+  top: -100px;
+  left: -120px;
+
+  border-radius: 50%;
+
+  filter: blur(100px);
+
+  z-index: -1;
+}
+
+body::after {
+  content: "";
+
+  position: fixed;
+
+  width: 350px;
+  height: 350px;
+
+  background: rgba(139, 92, 246, 0.18);
+
+  bottom: -100px;
+  right: -100px;
+
+  border-radius: 50%;
+
+  filter: blur(100px);
+
+  z-index: -1;
+}
+
+/* =========================
+   ROOT
+========================= */
+
+#root {
+  width: 100%;
+
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 20px;
+
   box-sizing: border-box;
+}
+
+/* =========================
+   TYPOGRAPHY
+========================= */
+
+h1,
+h2 {
+  font-family: var(--heading);
+
+  color: var(--text-h);
+
+  margin: 0;
+}
+
+h1 {
+  font-size: 52px;
+
+  font-weight: 700;
+
+  letter-spacing: -2px;
+
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  @media (max-width: 1024px) {
+    font-size: 38px;
+  }
+}
+
+h2 {
+  font-size: 24px;
+
+  font-weight: 600;
+
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+
+p {
+  margin: 0;
+
+  color: var(--text);
+}
+
+/* =========================
+   CODE / SMALL UI
+========================= */
+
+code,
+.counter {
+  font-family: var(--mono);
+
+  display: inline-flex;
+
+  border-radius: 10px;
+
+  color: var(--text-h);
+}
+
+code {
+  font-size: 14px;
+
+  padding: 6px 10px;
+
+  background: var(--code-bg);
+
+  border: 1px solid var(--border);
+}
+
+/* =========================
+   GLASS CARD
+========================= */
+
+.glass-card {
+  width: 100%;
+
+  max-width: 420px;
+
+  background: var(--card-bg);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid var(--border);
+
+  border-radius: 30px;
+
+  padding: 40px 30px;
+
+  box-shadow: var(--shadow);
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.input {
+  width: 100%;
+
+  padding: 15px 18px;
+
+  margin-top: 14px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(217, 70, 239, 0.12);
+
+  background: rgba(255, 255, 255, 0.65);
+
+  outline: none;
+
+  font-size: 15px;
+
+  transition: 0.3s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+
+  box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.12);
+}
+
+.input::placeholder {
+  color: #a08cb2;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn {
+  width: 100%;
+
+  margin-top: 20px;
+
+  border: none;
+
+  padding: 15px;
+
+  border-radius: 18px;
+
+  cursor: pointer;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+
+  box-shadow: 0 10px 20px rgba(217, 70, 239, 0.2);
+
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 14px 28px rgba(217, 70, 239, 0.3);
+}
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-main);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  font-family: "Outfit", sans-serif;
 
-/* ==========================================================================
-   Typography
-   ========================================================================== */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
+  background:
+    linear-gradient(
+      135deg,
+      #fff0f8 0%,
+      #f7ebff 50%,
+      #f2e7ff 100%
+    );
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
+  min-height: 100vh;
 
-p {
-  color: var(--text-muted);
-  font-size: 1rem;
-}
-
-/* Helper to get that "AI Sparkle" gradient text */
-.gradient-text {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-}
-
-/* ==========================================================================
-   Interactive Elements (Buttons & Links)
-   ========================================================================== */
-a {
-  color: var(--primary-purple);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-a:hover {
-  color: var(--primary-purple-hover);
-}
-
-/* Primary Vibrant Button */
-.btn-primary {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  background: var(--primary-purple);
-  color: #FFFFFF;
-  border: none;
-  padding: 12px 24px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(123, 44, 191, 0.3);
-  transition: var(--transition);
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 8px;
+
+  overflow-x: hidden;
 }
 
-.btn-primary:hover {
-  background: var(--primary-purple-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(123, 44, 191, 0.4);
-}
-
-/* Accent/Secondary Pink Button */
-.btn-secondary {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  background: var(--baby-pink-light);
-  color: var(--primary-purple);
-  border: 1px solid var(--baby-pink);
-  padding: 12px 24px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: var(--transition);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-secondary:hover {
-  background: var(--baby-pink);
-  color: var(--text-main);
-  transform: translateY(-2px);
-}
-
-/* ==========================================================================
-   Layout Components (Cards, Inputs, Badges)
-   ========================================================================== */
-
-/* UI Cards (Perfect for thumbnail workspace panels or templates) */
-.card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  border: 1px solid rgba(255, 194, 209, 0.3); /* Subtle baby pink border */
-  box-shadow: var(--shadow-md);
-  transition: var(--transition);
-}
-
-.card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--baby-pink);
-}
-
-/* Beautiful Input Fields for AI Prompts */
-.input-field {
+.auth-container {
   width: 100%;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1rem;
-  padding: 14px 16px;
-  background-color: var(--bg-primary);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  color: var(--text-main);
-  transition: var(--transition);
-  outline: none;
+
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
 }
 
-.input-field:focus {
-  border-color: var(--primary-purple);
-  background-color: var(--bg-secondary);
-  box-shadow: 0 0 0 4px rgba(123, 44, 191, 0.1);
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+
+  background: rgba(255, 255, 255, 0.55);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.45);
+
+  border-radius: 32px;
+
+  padding: 40px 30px;
+
+  box-shadow:
+    0 10px 30px rgba(217, 70, 239, 0.12),
+    0 6px 18px rgba(139, 92, 246, 0.1);
+
+  transition: 0.3s ease;
 }
 
-/* "AI Feature" or "Premium" Badges */
-.badge {
-  display: inline-flex;
-  padding: 6px 12px;
-  font-size: 0.75rem;
+.auth-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 14px 35px rgba(217, 70, 239, 0.16),
+    0 10px 24px rgba(139, 92, 246, 0.14);
+}
+
+.auth-title {
+  font-size: 2rem;
+
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: var(--radius-sm);
-  background: var(--gradient-subtle);
-  color: var(--primary-purple);
-  border: 1px solid rgba(123, 44, 191, 0.1);
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ec4899,
+      #8b5cf6
+    );
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  margin-bottom: 10px;
+}
+
+.auth-subtitle {
+  text-align: center;
+
+  color: #7b6d85;
+
+  margin-bottom: 30px;
+
+  font-size: 14px;
+}
+
+.auth-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.auth-input {
+  width: 100%;
+
+  padding: 15px 18px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(217, 70, 239, 0.15);
+
+  background: rgba(255, 255, 255, 0.72);
+
+  outline: none;
+
+  font-size: 15px;
+
+  color: #4b4453;
+
+  transition: 0.3s ease;
+}
+
+.auth-input::placeholder {
+  color: #b19bbd;
+}
+
+.auth-input:focus {
+  border-color: #d946ef;
+
+  box-shadow:
+    0 0 0 4px rgba(217, 70, 239, 0.1);
+}
+
+.auth-btn {
+  width: 100%;
+
+  border: none;
+
+  padding: 15px;
+
+  border-radius: 18px;
+
+  cursor: pointer;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #8b5cf6
+    );
+
+  box-shadow:
+    0 10px 20px rgba(217, 70, 239, 0.2);
+
+  transition: 0.3s ease;
+}
+
+.auth-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 25px rgba(217, 70, 239, 0.3);
+}
+
+.dummy-btn {
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(217, 70, 239, 0.15);
+
+  background: rgba(255, 255, 255, 0.5);
+
+  color: #9333ea;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.dummy-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.switch-text {
+  text-align: center;
+
+  color: #7b6d85;
+
+  font-size: 14px;
+
+  margin-top: 10px;
+}
+
+.switch-text span {
+  color: #d946ef;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+  margin-left: 6px;
+
+  transition: 0.3s ease;
+}
+
+.switch-text span:hover {
+  color: #9333ea;
+}
+
+@media (max-width: 500px) {
+  .auth-card {
+    padding: 30px 22px;
+
+    border-radius: 24px;
+  }
+
+  .auth-title {
+    font-size: 1.7rem;
+  }
+
+  .auth-input {
+    padding: 14px 16px;
+  }
 }

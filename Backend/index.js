@@ -10,8 +10,11 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors()); //middleware to enable CORS
-app.use(express.json()); 
+app.use(cors({
+    origin: "http://localhost:5173", // your Vite port
+    credentials: true
+})); //middleware to enable CORS
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send(" Welcome to Thumbnail generator Platform")
