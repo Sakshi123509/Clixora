@@ -1,5 +1,4 @@
-import mongoose, { model, mongo, Schema } from "mongoose"
-import CTAScore from "../../Frontend/src/pages/CTA_score"
+import mongoose, { model, mongo, Schema } from "mongoose";
 
 const thumbnailSchema = new mongoose.Schema(
     {
@@ -12,8 +11,8 @@ const thumbnailSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        imageUrl: {//cloudinary
-            tyep: String,
+        imageUrl: {
+            type: String,
             required: true,
         },
         ctaScore: {
@@ -26,10 +25,10 @@ const thumbnailSchema = new mongoose.Schema(
         style: {
             type: String,
         },
-        colour: {
+        color: {
             type: String,
         }
     }, { timestamps: true }
 )
 
-module.exports = mongoose.model("Thumbnail", thumbnailSchema)
+export default mongoose.model("Thumbnail", thumbnailSchema);

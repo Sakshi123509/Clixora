@@ -1,12 +1,13 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export const CTAScore = async (req, res) => {
     const { imageurl } = req.body;
-
+    
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+    
     if (!imageurl) {
         return res.status(400).json({
             success: false,

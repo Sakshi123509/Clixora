@@ -1,10 +1,8 @@
 import OpenAI from "openai";
 import { v2 as cloudinary } from "cloudinary";
-import Thumbnail from "../models/thumbnail.js";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+console.log("KEY =", process.env.OPENAI_API_KEY);
+
 
 // Cloudinary config
 cloudinary.config({
@@ -14,8 +12,12 @@ cloudinary.config({
 });
 
 export const generateThumbnail = async (req, res) => {
-  const { style, niche, colour, title } = req.body;
+  const { style, niche, color, title } = req.body;
   const userId = req.user.id;
+  
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
 
   try {
     const prompt = `
@@ -33,7 +35,7 @@ export const generateThumbnail = async (req, res) => {
       "${title}"
 
       Color & Lighting:
-      Dominated by a ${colour} color palette with dramatic rim lighting,
+      Dominated by a ${color} color palette with dramatic rim lighting,
       deep shadows, and high contrast.
 
       Hyper-detailed, sharp focus, professional YouTube thumbnail,
@@ -82,7 +84,7 @@ export const generateThumbnail = async (req, res) => {
       success: true,
       images: finalUrls,
     });
-    
+
   } catch (error) {
     console.error("Thumbnail generation error:", error);
 
