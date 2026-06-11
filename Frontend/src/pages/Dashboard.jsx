@@ -189,3 +189,145 @@ export default function Dashboard() {
     </>
   );
 }
+
+// import React from "react";
+
+// export default function DashboardPage() {
+//   const recentDrafts = [
+//     {
+//       title: "How I Closed a $100k Client Deal",
+//       niche: "Business & Sales",
+//       time: "Edited 2h ago",
+//       score: 94,
+//       imgurl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=500&auto=format&fit=crop",
+//     },
+//     {
+//       title: "The Ultimate Guide to YouTube Growth",
+//       niche: "Creator Tips",
+//       time: "Edited 1d ago",
+//       score: 91,
+//       imgurl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=500&auto=format&fit=crop",
+//     },
+//     {
+//       title: "Coding a SaaS App in 24 Hours",
+//       niche: "Tech / Dev",
+//       time: "Edited 3d ago",
+//       score: 82,
+//       imgurl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=500&auto=format&fit=crop",
+//     },
+//   ];
+
+//   const quickStats = [
+//     { title: "Generations Remaining", val: "148 / 200", icon: "💎" },
+//     { title: "Average CTR Score", val: "89.2%", icon: "📈" },
+//     { title: "Active Canvas Vectors", val: "24 Layers", icon: "📐" },
+//     { title: "Cloudflare Sync Status", val: "Online", icon: "🟢" },
+//   ];
+
+//   return (
+//     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans relative overflow-hidden">
+//       <style>{`
+//         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap');
+//         .font-outfit { font-family: 'Outfit', sans-serif; }
+//       `}</style>
+
+//       {/* TECH BACKGROUND OVERLAYS */}
+//       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+//         <div className="absolute w-[700px] h-[700px] top-[20%] -right-[100px] rounded-full bg-indigo-600/10 blur-[140px]" />
+//         <div className="absolute w-[600px] h-[600px] -bottom-[100px] left-[5%] rounded-full bg-pink-600/5 blur-[120px]" />
+//       </div>
+
+//       <div className="relative z-10 font-outfit">
+//         {/* NAV */}
+//         <nav className="bg-slate-950/60 backdrop-blur-xl border-b border-slate-800/80 px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+//           <div className="flex items-center gap-3 font-black text-2xl tracking-tighter cursor-pointer text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400" style={{ fontFamily: "'Syne', sans-serif" }}>
+//             CLIXORA
+//           </div>
+//           <div className="flex gap-8 font-semibold text-slate-400 text-sm">
+//             <a href="/" className="hover:text-pink-500 transition">Home</a>
+//             <a href="/dashboard" className="text-pink-500 border-b-2 border-pink-500 pb-1">Dashboard</a>
+//             <a href="/generate" className="hover:text-pink-500 transition">Generator Matrix</a>
+//           </div>
+//           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md">JD</div>
+//         </nav>
+
+//         {/* METRICS HUB OVERVIEW */}
+//         <main className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+          
+//           {/* USER VERIFICATION BAR */}
+//           <div className="bg-slate-950/80 border border-slate-800/80 rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 backdrop-blur-xl relative overflow-hidden">
+//             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
+//             <div className="flex items-center gap-4">
+//               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-600 flex items-center justify-center font-black text-xl shadow-xl shadow-pink-500/10">
+//                 JD
+//               </div>
+//               <div>
+//                 <div className="flex items-center gap-2">
+//                   <h2 className="text-2xl font-black tracking-tight text-slate-100" style={{ fontFamily: "'Syne', sans-serif" }}>Workspace Console</h2>
+//                   <span className="bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded">PRO LEVEL</span>
+//                 </div>
+//                 <p className="text-xs text-slate-400 font-medium mt-0.5">Session Key: <span className="font-mono text-indigo-400 select-all">clx_token_9472_auth_active</span></p>
+//               </div>
+//             </div>
+//             <div className="flex gap-3 w-full md:w-auto">
+//               <button className="flex-1 md:flex-none bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold text-xs px-5 py-3 rounded-xl transition">Settings</button>
+//               <a href="/generate" className="flex-1 md:flex-none text-center bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-lg shadow-pink-600/10 hover:from-pink-700 transition">
+//                 + Launch Engine
+//               </a>
+//             </div>
+//           </div>
+
+//           {/* QUICK ANALYTICS METRICS */}
+//           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+//             {quickStats.map((m, i) => (
+//               <div key={i} className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-5 space-y-2 backdrop-blur-md">
+//                 <div className="flex justify-between items-center">
+//                   <span className="text-[9px] uppercase font-bold tracking-widest text-slate-500 font-mono">{m.title}</span>
+//                   <span className="text-sm opacity-80">{m.icon}</span>
+//                 </div>
+//                 <div className="text-xl font-black text-slate-200 font-mono tracking-tight">{m.val}</div>
+//               </div>
+//             ))}
+//           </div>
+
+//           {/* RECENT THUMBNAILS CONTAINER */}
+//           <div className="space-y-6">
+//             <div className="flex justify-between items-end">
+//               <div>
+//                 <h3 className="text-xl font-black text-slate-200 tracking-tight" style={{ fontFamily: "'Syne', sans-serif" }}>RECENT GENERATED DRAUGHTS</h3>
+//                 <p className="text-xs text-slate-500 mt-0.5">Live index matrix synchronized from user cloud nodes.</p>
+//               </div>
+//               <button className="text-xs font-mono font-bold text-pink-400 hover:text-pink-300 transition uppercase tracking-wider">All Assets &rarr;</button>
+//             </div>
+
+//             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+//               {recentDrafts.map((draft, idx) => (
+//                 <div key={idx} className="bg-slate-950 border border-slate-800/80 rounded-2xl p-4 shadow-xl hover:border-slate-700 transition duration-300 group cursor-pointer flex flex-col justify-between">
+//                   <div>
+//                     {/* THUMBNAIL CONTAINER OVERLAY */}
+//                     <div className="w-full aspect-video rounded-xl mb-4 overflow-hidden relative border border-slate-900 bg-slate-900">
+//                       <img src={draft.imgurl} alt={draft.title} className="w-full h-full object-cover group-hover:scale-102 transition duration-500" />
+//                       <div className="absolute top-2 right-2 bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[9px] font-mono text-slate-400 px-2 py-0.5 rounded">
+//                         {draft.time}
+//                       </div>
+//                     </div>
+//                     <span className="text-[10px] font-bold uppercase tracking-widest text-pink-400 block font-mono mb-1">{draft.niche}</span>
+//                     <h4 className="font-bold text-sm text-slate-200 line-clamp-1 group-hover:text-pink-400 transition">{draft.title}</h4>
+//                   </div>
+
+//                   <div className="flex justify-between items-center pt-4 mt-4 border-t border-slate-900">
+//                     <span className="text-[9px] font-mono font-bold tracking-widest text-slate-500 uppercase">PREDICTIVE SCORE</span>
+//                     <span className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md ${draft.score >= 85 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border border-amber-500/20"}`}>
+//                       {draft.score}% CTR
+//                     </span>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//         </main>
+//       </div>
+//     </div>
+//   );
+// }

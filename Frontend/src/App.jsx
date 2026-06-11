@@ -6,6 +6,7 @@ import CTAScore from "./pages/CTA_score.jsx";
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Canvas from "./pages/Canvas.jsx";
+import Loader from "./components/Loader.jsx";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* <Route path="/" element={<Loader/>}/> */}
         <Route path="/login" element={<AuthPages />} />
         <Route path="/generate" element={<Generator />} />
         <Route path="/" element={<Home />} />
@@ -25,3 +27,18 @@ const App = () => {
 };
 
 export default App;
+// export default function App() {
+//   const [isLoading, setIsLoading] = useState(true);
+
+//   return (
+//     <>
+//       {isLoading ? (
+//         // Loader will show first and automatically fire the state change at 100%
+//         <Loader onLoadingComplete={() => setIsLoading(false)} />
+//       ) : (
+//         // Once loading finishes, push the login / registration layout
+//         <AuthPage />
+//       )}
+//     </>
+//   );
+// }
