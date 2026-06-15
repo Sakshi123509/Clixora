@@ -1,12 +1,20 @@
-import logo from "../assets/logobg.png";
-import { useState, useEffect, useRef } from "react";
+import logo from "../assets/logo1.png";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser, registerUser } from "../api/Auth.js";
+import {
+  MdDashboard,
+  MdMailOutline,
+  MdLockOutline,
+  MdOutlinePerson,
+} from "react-icons/md";
+import { RiAiGenerate } from "react-icons/ri";
+import { IoIosLogOut, IoMdEye, IoMdEyeOff } from "react-icons/io";
 
-/* ── Google Icon ─────────────────────────────────────────────── */
+/* ── Google Icon Component ───────────────────────────────────── */
 function GoogleIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+    <svg width="18" height="18" viewBox="0 0 24 24" className="flex-shrink-0">
       <path
         fill="#4285F4"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -27,59 +35,7 @@ function GoogleIcon() {
   );
 }
 
-/* ── Eye Toggle ──────────────────────────────────────────────── */
-function EyeBtn({ show, toggle }) {
-  return (
-    <button
-      onClick={toggle}
-      style={{
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        color: "rgba(212,83,126,.5)",
-        display: "flex",
-      }}
-    >
-      {show ? (
-        <svg
-          width="15"
-          height="15"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"
-            strokeLinecap="round"
-          />
-          <path
-            d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"
-            strokeLinecap="round"
-          />
-          <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
-        </svg>
-      ) : (
-        <svg
-          width="15"
-          height="15"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-            strokeLinecap="round"
-          />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      )}
-    </button>
-  );
-}
-
-/* ── Field ───────────────────────────────────────────────────── */
+/* ── UI Core Reusable Field Input ────────────────────────────── */
 function Field({
   label,
   type = "text",
@@ -89,37 +45,14 @@ function Field({
   rightEl,
   icon,
 }) {
-  const [focused, setFocused] = useState(false);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-      <label
-        style={{
-          fontSize: "11px",
-          letterSpacing: "1.2px",
-          textTransform: "uppercase",
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontWeight: 600,
-          color: focused ? "#7F77DD" : "#993556",
-          transition: "color .2s",
-        }}
-      >
+    <div className="flex flex-col gap-1.5 w-full">
+      <label className="text-[10px] tracking-widest uppercase font-mono font-bold text-slate-400">
         {label}
       </label>
-      <div style={{ position: "relative" }}>
+      <div className="relative w-full group">
         {icon && (
-          <span
-            style={{
-              position: "absolute",
-              left: 11,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: focused ? "#D4537E" : "rgba(212,83,126,.45)",
-              fontSize: 15,
-              display: "flex",
-              pointerEvents: "none",
-              transition: "color .2s",
-            }}
-          >
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-500 text-lg transition-colors pointer-events-none flex items-center">
             {icon}
           </span>
         )}
@@ -128,34 +61,12 @@ function Field({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          style={{
-            width: "100%",
-            padding: `10px ${rightEl ? "38px" : "12px"} 10px ${icon ? "34px" : "12px"}`,
-            background: focused
-              ? "rgba(255,255,255,.92)"
-              : "rgba(255,255,255,.65)",
-            border: `1px solid ${focused ? "rgba(127,119,221,.5)" : "rgba(212,83,126,.18)"}`,
-            borderRadius: "10px",
-            color: "#3C3489",
-            fontSize: "13px",
-            fontFamily: "'Plus Jakarta Sans',sans-serif",
-            outline: "none",
-            boxShadow: focused ? "0 0 0 3px rgba(127,119,221,.1)" : "none",
-            transition: "all .2s",
-            boxSizing: "border-box",
-          }}
+          className={`w-full text-xs font-medium text-slate-700 placeholder-slate-300/90 bg-slate-50 border border-slate-200/80 rounded-xl outline-none transition-all focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 ${
+            icon ? "pl-10" : "pl-4"
+          } ${rightEl ? "pr-10" : "pr-4"} py-3`}
         />
         {rightEl && (
-          <div
-            style={{
-              position: "absolute",
-              right: 11,
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
-          >
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center">
             {rightEl}
           </div>
         )}
@@ -164,92 +75,24 @@ function Field({
   );
 }
 
-/* ── OR Divider ──────────────────────────────────────────────── */
+/* ── Split Divider Component ─────────────────────────────────── */
 function OrDivider() {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <div
-        style={{
-          flex: 1,
-          height: 1,
-          background:
-            "linear-gradient(90deg,transparent,rgba(212,83,126,.2),transparent)",
-        }}
-      />
-      <span
-        style={{
-          fontSize: "11px",
-          letterSpacing: "1.5px",
-          color: "rgba(212,83,126,.6)",
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontWeight: 600,
-        }}
-      >
+    <div className="flex items-center gap-3 my-4">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent to-slate-200" />
+      <span className="text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase">
         or
       </span>
-      <div
-        style={{
-          flex: 1,
-          height: 1,
-          background:
-            "linear-gradient(90deg,transparent,rgba(212,83,126,.2),transparent)",
-        }}
-      />
+      <div className="flex-1 h-px bg-gradient-to-l from-transparent to-slate-200" />
     </div>
   );
 }
 
-/* ── Icon SVGs ───────────────────────────────────────────────── */
-const MailIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    viewBox="0 0 24 24"
-  >
-    <path
-      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-      strokeLinecap="round"
-    />
-    <polyline points="22,6 12,13 2,6" />
-  </svg>
-);
-const LockIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    viewBox="0 0 24 24"
-  >
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-    <path d="M7 11V7a5 5 0 0110 0v4" strokeLinecap="round" />
-  </svg>
-);
-const UserIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    viewBox="0 0 24 24"
-  >
-    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
-
-/* ── Login Form ──────────────────────────────────────────────── */
+/* ── Login Module Interface ──────────────────────────────────── */
 function LoginPage({ onSwitch }) {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [hover, setHover] = useState(false);
-  const [gHover, setGHover] = useState(false);
   const navigate = useNavigate();
 
   const fillDummy = () => {
@@ -264,251 +107,118 @@ function LoginPage({ onSwitch }) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("userName", data.username);
-        navigate("/home");
+        navigate("/");
       } else {
         alert(data.message || "Login failed");
       }
     } catch (err) {
-      console.log(err.response?.data);
       alert(err.response?.data?.message || "Login failed. Please try again.");
     }
   };
-
-  useEffect(() => {
-    if (!window.google) return;
-    window.google.accounts.id.initialize({
-      client_id: "CLIENT_ID",
-      callback: async (res) => {
-        try {
-          const r = await fetch("/api/auth/google", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: res.credential }),
-          });
-          const d = await r.json();
-          if (d.token) {
-            localStorage.setItem("token", d.token);
-            navigate("/home");
-          }
-        } catch {
-          alert("Google login failed");
-        }
-      },
-    });
-    window.google.accounts.id.renderButton(
-      document.getElementById("gSignInLogin"),
-      { theme: "outline", size: "large", width: "260" },
-    );
-  }, []);
+  const handleGoogleLogin = () => {
+    // Point this directly to your backend server port and route
+    window.location.href = "http://localhost:8000/api/auth/google";
+  };
 
   return (
-    <div style={{ animation: "slideUp .55s cubic-bezier(.23,1,.32,1) both" }}>
-      {/* Header row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 10,
-          marginBottom: 20,
-        }}
-      >
-        <div
-          style={{
-            width: 44,
-            height: 40,
-            borderRadius: "50%",
-            flexShrink: 0,
-            // background: "linear-gradient(135deg,#F4C0D1,#ED93B1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ width: "100%", object: "cover", height: "100%" }}
-          />
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col gap-4">
+      {/* Dynamic Identity Branding Header Row */}
+      <div className="flex items-center gap-3.5 mb-2 bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+        <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-pink-500 to-indigo-600 p-0.5 shadow-sm flex-shrink-0">
+          <div className="w-full h-full bg-white rounded-full flex items-center justify-center overflow-hidden">
+            <img src={logo} alt="Logo" className="w-9 h-9 object-contain" />
+          </div>
         </div>
-        <div>
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#3C3489",
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
-            }}
-          >
-            WELCOME BACK
-          </div>
-          <div
-            style={{
-              fontSize: 12,
-              color: "#993556",
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
-            }}
-          >
-            Sign in to your account
-          </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-sm font-black text-slate-800 tracking-tight uppercase">
+            Welcome Back
+          </h2>
+          <p className="text-xs font-medium text-slate-400 truncate">
+            Sign in to initialize session
+          </p>
         </div>
       </div>
 
-      {/* Google */}
       <button
-        onMouseEnter={() => setGHover(true)}
-        onMouseLeave={() => setGHover(false)}
-        style={{
-          width: "100%",
-          padding: "10px 14px",
-          background: gHover ? "#fff" : "rgba(255,255,255,.75)",
-          border: `1px solid ${gHover ? "rgba(127,119,221,.4)" : "rgba(212,83,126,.2)"}`,
-          borderRadius: 12,
-          fontSize: 13,
-          fontWeight: 600,
-          color: gHover ? "#3C3489" : "#72243E",
-          cursor: "pointer",
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 9,
-          transition: "all .2s",
-          marginBottom: 14,
-        }}
+        onClick={() => console.log("Init Google Stream")}
+        className="w-full py-3 px-4 
+        cursor-pointer bg-white border border-slate-200 text-xs font-bold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-indigo-600 hover:border-slate-300 transition shadow-sm flex items-center justify-center gap-2.5"
       >
         <GoogleIcon /> Continue with Google
       </button>
 
       <OrDivider />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 13,
-          margin: "14px 0",
-        }}
-      >
+      <div className="flex flex-col gap-3.5">
         <Field
-          label="Email address"
+          label="Email node address"
           type="email"
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          icon={<MailIcon />}
+          icon={<MdMailOutline />}
         />
         <Field
-          label="Password"
+          label="Security Key Cipher"
           placeholder="••••••••••"
           value={pw}
           onChange={(e) => setPw(e.target.value)}
           type={showPw ? "text" : "password"}
-          icon={<LockIcon />}
-          rightEl={<EyeBtn show={showPw} toggle={() => setShowPw((v) => !v)} />}
+          icon={<LockIconWrapper />}
+          rightEl={
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="text-slate-400 cursor-pointer hover:text-pink-500 text-base transition-colors"
+            >
+              {showPw ? <IoMdEyeOff /> : <IoMdEye />}
+            </button>
+          }
         />
       </div>
 
-      <div style={{ textAlign: "right", marginBottom: 18 }}>
-        <span
-          style={{
-            fontSize: 11,
-            color: "#7F77DD",
-            cursor: "pointer",
-            fontFamily: "'Plus Jakarta Sans',sans-serif",
-            fontWeight: 600,
-            letterSpacing: ".3px",
-          }}
-        >
-          Forgot password?
+      <div className="text-right">
+        <span className="text-[11px] text-indigo-600 hover:text-pink-600 transition cursor-pointer font-bold">
+          Forgot passkey cipher?
         </span>
       </div>
 
-      <button
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onClick={handleLogin}
-        style={{
-          width: "100%",
-          padding: "12px",
-          border: "none",
-          borderRadius: 12,
-          background: hover
-            ? "linear-gradient(135deg,#C4446E 0%,#9990D0 60%,#6F68CC 100%)"
-            : "linear-gradient(135deg,#D4537E 0%,#AFA9EC 60%,#7F77DD 100%)",
-          cursor: "pointer",
-          color: "#fff",
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 13,
-          fontWeight: 700,
-          letterSpacing: 1,
-          transform: hover ? "translateY(-1px)" : "translateY(0)",
-          boxShadow: hover
-            ? "0 6px 20px rgba(127,119,221,.3)"
-            : "0 2px 10px rgba(212,83,126,.15)",
-          transition: "all .22s",
-        }}
-      >
-        Authenticate →
-      </button>
+      <div className="flex flex-col gap-2 mt-2">
+        <button
+          onClick={handleLogin}
+          className="w-full py-3 bg-gradient-to-tr cursor-pointer from-pink-500 to-indigo-600 hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-500/10 hover:scale-[1.01] transition transform active:scale-100 tracking-wider uppercase"
+        >
+          Authenticate Cluster →
+        </button>
 
-      <button
-        onClick={fillDummy}
-        style={{
-          marginTop: 10,
-          width: "100%",
-          padding: "9px",
-          background: "transparent",
-          border: "1px dashed rgba(127,119,221,.35)",
-          borderRadius: 10,
-          color: "rgba(127,119,221,.7)",
-          cursor: "pointer",
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: "1.5px",
-          transition: "all .2s",
-        }}
-      >
-        use dummy credentials
-      </button>
+        <button
+          onClick={fillDummy}
+          className="w-full cursor-pointer py-2.5 bg-transparent border-2 border-dashed border-slate-200 text-[11px] font-bold text-slate-400 hover:border-pink-300 hover:text-pink-500 rounded-xl transition uppercase tracking-widest"
+        >
+          Inject Sandbox Credentials
+        </button>
+      </div>
 
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: 18,
-          marginBottom: 0,
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 12,
-          color: "#7F77DD",
-        }}
-      >
-        New here?{" "}
+      <p className="text-center text-xs font-semibold text-slate-400 mt-2">
+        New to the matrix?{" "}
         <span
           onClick={onSwitch}
-          style={{
-            color: "#D4537E",
-            cursor: "pointer",
-            textDecoration: "underline",
-            textUnderlineOffset: 2,
-            fontWeight: 700,
-          }}
+          className="text-pink-600 font-bold hover:underline cursor-pointer"
         >
-          Create account
+          Create instance node
         </span>
       </p>
     </div>
   );
 }
 
-/* ── Signup Form ─────────────────────────────────────────────── */
+/* ── Signup Module Interface ─────────────────────────────────── */
 function SignupPage({ onSwitch }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [hover, setHover] = useState(false);
 
   const handleRegister = async () => {
     if (pw !== confirm) {
@@ -524,315 +234,162 @@ function SignupPage({ onSwitch }) {
         alert(data.error || "Registration failed");
       }
     } catch (err) {
-      console.log(err.response?.data);
-
-      alert(
-        err.response?.data?.msg ||
-          err.response?.data?.error ||
-          "Registration failed",
-      );
+      alert(err.response?.data?.error || "Registration failed");
     }
   };
 
   return (
-    <div style={{ animation: "slideUp .55s cubic-bezier(.23,1,.32,1) both" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 20,
-        }}
-      >
-        <div
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: "50%",
-            flexShrink: 0,
-            background: "linear-gradient(135deg,#CECBF6,#AFA9EC)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <UserIcon />
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col gap-4">
+      <div className="flex items-center gap-3.5 mb-2 bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+        <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-pink-500 to-indigo-600 p-0.5 shadow-sm flex-shrink-0 flex items-center justify-center text-white text-xl font-bold">
+          <MdOutlinePerson />
         </div>
-        <div>
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#3C3489",
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
-            }}
-          >
-            Join Clixora
-          </div>
-          <div
-            style={{
-              fontSize: 12,
-              color: "#993556",
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
-            }}
-          >
-            Create your free account today
-          </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-sm font-black text-slate-800 tracking-tight uppercase">
+            Join Clixora Matrix
+          </h2>
+          <p className="text-xs font-medium text-slate-400 truncate">
+            Spawn a clean cloud node instance
+          </p>
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 13,
-          marginBottom: 16,
-        }}
-      >
+      <div className="flex flex-col gap-3.5">
         <Field
-          label="Full name"
+          label="Profile Node Identifier"
           placeholder="Your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          icon={<UserIcon />}
+          icon={<MdOutlinePerson />}
         />
         <Field
-          label="Email address"
+          label="Email Node Address"
           type="email"
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          icon={<MailIcon />}
+          icon={<MdMailOutline />}
         />
         <Field
-          label="Password"
-          placeholder="Create a strong password"
+          label="Security Key Cipher"
+          placeholder="Create account key"
           value={pw}
           onChange={(e) => setPw(e.target.value)}
           type={showPw ? "text" : "password"}
-          icon={<LockIcon />}
-          rightEl={<EyeBtn show={showPw} toggle={() => setShowPw((v) => !v)} />}
+          icon={<LockIconWrapper />}
+          rightEl={
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="text-slate-400 cursor-pointer hover:text-pink-500 text-base transition-colors"
+            >
+              {showPw ? <IoMdEyeOff /> : <IoMdEye />}
+            </button>
+          }
         />
         <Field
-          label="Confirm password"
+          label="Verify Passkey Match"
           type="password"
-          placeholder="Repeat password"
+          placeholder="Repeat account key"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          icon={<LockIcon />}
+          icon={<LockIconWrapper />}
         />
       </div>
 
-      <p
-        style={{
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 11,
-          color: "rgba(127,119,221,.6)",
-          textAlign: "center",
-          marginBottom: 14,
-          lineHeight: 1.5,
-        }}
-      >
-        By joining you agree to our{" "}
-        <span style={{ color: "#D4537E", cursor: "pointer", fontWeight: 600 }}>
-          Terms
+      <p className="text-[11px] font-medium text-slate-400 text-center leading-relaxed px-2">
+        By initializing an active profile node framework, you register agreement
+        to our{" "}
+        <span className="text-indigo-600 hover:underline font-bold cursor-pointer">
+          Terms Matrix
+        </span>{" "}
+        and{" "}
+        <span className="text-indigo-600 hover:underline font-bold cursor-pointer">
+          Privacy Node
         </span>
-        {" & "}
-        <span style={{ color: "#D4537E", cursor: "pointer", fontWeight: 600 }}>
-          Privacy Policy
-        </span>
+        .
       </p>
 
       <button
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
         onClick={handleRegister}
-        style={{
-          width: "100%",
-          padding: "12px",
-          border: "none",
-          borderRadius: 12,
-          background: hover
-            ? "linear-gradient(135deg,#9990D0 0%,#C4446E 100%)"
-            : "linear-gradient(135deg,#AFA9EC 0%,#D4537E 100%)",
-          cursor: "pointer",
-          color: "#fff",
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 13,
-          fontWeight: 700,
-          letterSpacing: 1,
-          transform: hover ? "translateY(-1px)" : "translateY(0)",
-          boxShadow: hover
-            ? "0 6px 20px rgba(212,83,126,.3)"
-            : "0 2px 10px rgba(127,119,221,.15)",
-          transition: "all .22s",
-        }}
+        className="w-full py-3 bg-gradient-to-tr cursor-pointer from-pink-500 to-indigo-600 hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-500/10 hover:scale-[1.01] transition transform active:scale-100 tracking-wider uppercase mt-2"
       >
-        Create account →
+        Deploy Node Instance →
       </button>
 
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: 16,
-          marginBottom: 0,
-          fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 12,
-          color: "#7F77DD",
-        }}
-      >
-        Already have an account?{" "}
+      <p className="text-center text-xs font-semibold text-slate-400 mt-1">
+        Already verified within cluster?{" "}
         <span
           onClick={onSwitch}
-          style={{
-            color: "#D4537E",
-            cursor: "pointer",
-            textDecoration: "underline",
-            textUnderlineOffset: 2,
-            fontWeight: 700,
-          }}
+          className="text-pink-600 font-bold hover:underline cursor-pointer"
         >
-          Sign in
+          Sign In
         </span>
       </p>
     </div>
   );
 }
 
-/* ── Main Export ─────────────────────────────────────────────── */
+/* ── Main Framework Layout Module Export ──────────────────────── */
 export default function AuthPages() {
   const [page, setPage] = useState("login");
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px 16px",
-        boxSizing: "border-box",
-        position: "relative",
-        overflow: "hidden",
-        background: "#fdf0f7",
-      }}
-    >
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          width: "100%",
-          maxWidth: 420,
-        }}
-      >
-        {/* Dot cluster + brand name */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            justifyContent: "center",
-            marginBottom: 18,
-          }}
-        >
-          <div style={{ display: "flex", gap: 4 }}>
-            {["#D4537E", "#7F77DD", "#ED93B1"].map((c, i) => (
-              <div
-                key={i}
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  background: c,
-                }}
-              />
-            ))}
+    <div className="min-h-screen w-full bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans selection:bg-pink-500/10 selection:text-pink-600">
+      {/* ── Visual Ambient Background Glow System ── */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-pink-200/30 blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-200/30 blur-[130px] pointer-events-none" />
+
+      {/* ✅ FIXED: Changed 'w-fullHon' to 'w-full' to preserve exact layout balance */}
+      <div className="relative z-10 w-full max-w-[400px] flex flex-col">
+        {/* Core Upper Branding Badge */}
+        <div className="flex items-center gap-2 justify-center mb-5">
+          <div className="flex gap-1.5">
+            {["bg-pink-500", "bg-indigo-600", "bg-purple-400"].map(
+              (color, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full ${color} animate-pulse`}
+                  style={{ animationDelay: `${i * 200}ms` }}
+                />
+              ),
+            )}
           </div>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: 2,
-              color: "#993556",
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
-              textTransform: "uppercase",
-            }}
-          >
-            Clixora
+          <span className="text-xs font-mono font-black tracking-[0.25em] text-indigo-950 uppercase">
+            Clixora Matrix
           </span>
         </div>
 
-        {/* Tab switcher */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 6,
-            background: "rgba(212,83,126,.06)",
-            borderRadius: 14,
-            padding: 5,
-            marginBottom: 16,
-            border: "1px solid rgba(212,83,126,.1)",
-          }}
-        >
-          {["login", "signup"].map((t) => (
-            <button
-              key={t}
-              onClick={() => setPage(t)}
-              style={{
-                padding: "9px",
-                border: "none",
-                borderRadius: 10,
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: ".8px",
-                cursor: "pointer",
-                fontFamily: "'Plus Jakarta Sans',sans-serif",
-                color: page === t ? "#3C3489" : "#993556",
-                background:
-                  page === t
-                    ? "linear-gradient(135deg,#F4C0D1,#CECBF6)"
-                    : "transparent",
-                boxShadow:
-                  page === t ? "0 2px 8px rgba(127,119,221,.15)" : "none",
-                transition: "all .22s",
-              }}
-            >
-              {t === "login" ? "Sign in" : "Register"}
-            </button>
-          ))}
+        {/* Unified Interface Sliding Navigation Segment */}
+        <div className="grid grid-cols-2 gap-1.5 bg-slate-200/60 border border-slate-200/40 p-1.5 rounded-2xl mb-4 shadow-sm backdrop-blur-sm">
+          <button
+            onClick={() => setPage("login")}
+            className={`py-2.5 text-xs cursor-pointer font-bold tracking-wider uppercase rounded-xl transition-all ${
+              page === "login"
+                ? "bg-white text-slate-800 shadow-md shadow-slate-200/60"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => setPage("signup")}
+            className={`py-2.5 text-xs cursor-pointer font-bold tracking-wider uppercase rounded-xl transition-all ${
+              page === "signup"
+                ? "bg-white text-slate-800 shadow-md shadow-slate-200/60"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Register
+          </button>
         </div>
 
-        {/* Card */}
-        <div
-          style={{
-            background: "rgba(255,255,255,.62)",
-            border: "1px solid rgba(212,83,126,.18)",
-            borderRadius: 24,
-            padding: "28px 28px 24px",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow:
-              "0 8px 32px rgba(212,83,126,.08), 0 2px 8px rgba(127,119,221,.06), inset 0 1px 0 rgba(255,255,255,.8)",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* shimmer top */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "15%",
-              right: "15%",
-              height: 1,
-              background:
-                "linear-gradient(90deg,transparent,rgba(212,83,126,.35),rgba(127,119,221,.3),transparent)",
-            }}
-          />
+        {/* Main Interface Content Display Card */}
+        <div className="bg-white/80 border border-slate-200/60 rounded-3xl p-6 shadow-xl shadow-slate-950/[0.02] backdrop-blur-xl relative">
+          {/* Subtle Top Accent Highlight */}
+          <div className="absolute top-0 left-10 right-10 h-px bg-gradient-to-r from-transparent via-pink-400/40 to-transparent" />
 
-          <div style={{ position: "relative", zIndex: 1 }}>
+          <div>
             {page === "login" ? (
               <LoginPage key="login" onSwitch={() => setPage("signup")} />
             ) : (
@@ -841,19 +398,9 @@ export default function AuthPages() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.5)} }
-        @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-        * { box-sizing: border-box; }
-        body { margin: 0; }
-        input::placeholder { color: rgba(153,53,86,.28) !important; }
-        input:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0 100px rgba(253,240,247,.95) inset !important;
-          -webkit-text-fill-color: #3C3489 !important;
-        }
-      `}</style>
     </div>
   );
 }
+
+// Inline fallback lock interface vector layout hook wrapper
+const LockIconWrapper = () => <MdLockOutline className="text-lg" />;

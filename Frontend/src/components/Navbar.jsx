@@ -1,269 +1,160 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { MdDashboard } from "react-icons/md";
+import { IoIosLogOut } from "react-icons/io";
+import { RiAiGenerate } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+import logoImg from "../assets/logo1.png";
 
-export default function Navbar() {
+export default function Navbar({ logoImg }) {
+  const [user, setUser] = useState({
+    name: "Guest User",
+    email: "not-logged-in@clixora.ai",
+  });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const [drop, setDrop] = useState(false);
-  const userName = localStorage.getItem("userName") || "User";
-  const initials = userName.charAt(0).toUpperCase();
-  const isActive = (p) => location.pathname === p;
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/");
+  // Fetch user information upon mount
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName");
+    const storedEmail =
+      localStorage.getItem("userEmail") || localStorage.getItem("email");
+
+    if (storedName) {
+      setUser({
+        name: storedName,
+        email:
+          storedEmail ||
+          `${storedName.toLowerCase().replace(/\s+/g, "")}@clixora.ai`,
+      });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
+  };
+
+  const getInitials = (nameString) => {
+    if (!nameString) return "??";
+    const trimmedName = nameString.trim();
+    const nameParts = trimmedName.split(/\s+/);
+
+    if (nameParts.length === 1) {
+      return nameParts[0].substring(0, 2).toUpperCase();
+    }
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
   };
 
   return (
-    <>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap');`}</style>
-
-      <nav
-        style={{
-          position: "sticky",
-          top: 0,
-          width: "100%",
-          zIndex: 100,
-          height: 60,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 24px",
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(255,194,209,0.4)",
-          boxShadow: "0 1px 10px rgba(123,44,191,0.06)",
-          fontFamily: "'Outfit',sans-serif",
-          boxSizing: "border-box",
-        }}
+    <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+      <div
+        className="flex items-center gap-2 font-black text-xl text-pink-600 tracking-tight"
+        style={{ fontFamily: "'Syne', sans-serif" }}
       >
-        {/* Logo */}
-        <div
-          onClick={() => navigate("/home")}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            cursor: "pointer",
-          }}
-        >
-          <div
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: 7,
-              background: "linear-gradient(135deg,#EC4899,#7C3AED)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 2px 8px rgba(123,44,191,0.3)",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 80 80">
-              <defs>
-                <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fff" stopOpacity=".95" />
-                  <stop offset="100%" stopColor="#f9d0e8" stopOpacity=".9" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M62 20 A28 28 0 1 0 62 60"
-                stroke="url(#nlg)"
-                strokeWidth="10"
-                fill="none"
-                strokeLinecap="round"
-              />
-              <polygon
-                points="33,27 33,52 54,40"
-                fill="url(#nlg)"
-                opacity=".95"
-              />
-              <rect
-                x="5"
-                y="25"
-                width="7"
-                height="7"
-                rx="1.5"
-                fill="url(#nlg)"
-                opacity=".9"
-              />
-              <rect
-                x="14"
-                y="19"
-                width="5"
-                height="5"
-                rx="1"
-                fill="url(#nlg)"
-                opacity=".65"
-              />
-              <rect
-                x="14"
-                y="32"
-                width="5"
-                height="5"
-                rx="1"
-                fill="url(#nlg)"
-                opacity=".65"
-              />
-            </svg>
-          </div>
-          <span
-            style={{
-              fontFamily: "'Syne',sans-serif",
-              fontWeight: 800,
-              fontSize: "1.1rem",
-              background: "linear-gradient(135deg,#EC4899,#7C3AED)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              letterSpacing: "-.02em",
-            }}
-          >
-            Clixora
-          </span>
-        </div>
+        <span className="rounded-lg flex items-center justify-center">
+          <img
+            src={logoImg}
+            className="h-8 w-auto object-contain"
+            style={{ width: "100%" }}
+            alt="Logo"
+          />
+        </span>
+        CLIXORA
+      </div>
+      
+      <div className="hidden sm:flex gap-6 font-semibold text-sm text-slate-600">
+        <a href="/" className="text-pink-600 border-b-2 border-pink-600 pb-1">
+          Home
+        </a>
+        <a href="/dashboard" className="hover:text-slate-900 transition">
+          Dashboard
+        </a>
+        <a href="/generate" className="hover:text-slate-900 transition">
+          Generator Matrix
+        </a>
+      </div>
 
-        {/* Links */}
-        <div style={{ display: "flex", gap: 4 }}>
-          {[
-            { label: "✦ Generate", path: "/generate" },
-            { label: "Dashboard", path: "/dashboard" },
-          ].map(({ label, path }) => (
-            <button
-              key={path}
-              onClick={() => navigate(path)}
-              style={{
-                padding: "7px 14px",
-                border: "none",
-                borderRadius: 7,
-                background: isActive(path) ? "#f3e8ff" : "transparent",
-                color: isActive(path) ? "#7b2cbf" : "#6b5e73",
-                fontFamily: "'Outfit',sans-serif",
-                fontSize: "0.87rem",
-                fontWeight: isActive(path) ? 600 : 500,
-                cursor: "pointer",
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <div style={{ position: "relative" }}>
+      {/* Profile Avatar Trigger & Dropdown Menu */}
+      <div className="relative">
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          className="w-10 h-10 cursor-pointer rounded-full bg-pink-500 text-white flex items-center justify-center font-bold shadow-md hover:scale-105 transition-all focus:outline-none relative z-50 border-2 border-white uppercase tracking-wider"
+        >
+          {getInitials(user?.name)}
+        </button>
+
+        {isDropdownOpen && (
           <div
-            onClick={() => setDrop((v) => !v)}
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: "50%",
-              background: "linear-gradient(135deg,#EC4899,#7C3AED)",
-              color: "#fff",
-              fontFamily: "'Syne',sans-serif",
-              fontSize: "0.85rem",
-              fontWeight: 700,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              border: "2px solid transparent",
-              transition: "border-color .2s",
-            }}
-          >
-            {initials}
-          </div>
-          {/* drop */}
-          {drop && (
-            <>
-              <div
-                onClick={() => setDrop(false)}
-                style={{ position: "fixed", inset: 0, zIndex: 150 }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 8px)",
-                  right: 0,
-                  zIndex: 200,
-                  background: "#fff",
-                  border: "1px solid rgba(255,194,209,.45)",
-                  borderRadius: 10,
-                  boxShadow: "0 8px 28px rgba(123,44,191,.12)",
-                  padding: 6,
-                  minWidth: 150,
+            className="fixed inset-0 z-40 cursor-default"
+            onClick={() => setIsDropdownOpen(false)}
+          />
+        )}
+
+        {isDropdownOpen && (
+          <div className="absolute right-0 mt-3 w-56 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2.5 z-50 origin-top-right animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="px-4 py-2 border-b border-slate-100/80 mb-2 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-pink-50 flex-shrink-0 text-xs font-black text-pink-600 flex items-center justify-center border border-pink-100 uppercase">
+                {getInitials(user?.name)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-mono font-bold text-green-400 uppercase tracking-widest leading-none mb-1">
+                  Active Node
+                </p>
+                <p className="text-sm font-bold text-slate-800 truncate leading-tight">
+                  {user?.name || "Anonymous User"}
+                </p>
+                <p className="text-[11px] font-medium text-slate-500 truncate">
+                  {user?.email || "No email linked"}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-0.5 px-1.5">
+              <a
+                href="/dashboard"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-pink-600 transition"
+                onClick={() => setIsDropdownOpen(false)}
+              >
+                <span className="text-base text-slate-400">
+                  <MdDashboard />
+                </span>
+                Dashboard Cluster
+              </a>
+
+              <a
+                href="/generate"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-pink-600 transition sm:hidden"
+                onClick={() => setIsDropdownOpen(false)}
+              >
+                <span className="text-base text-slate-400">
+                  <RiAiGenerate />
+                </span>
+                Generator Matrix
+              </a>
+            </div>
+
+            <div className="border-t border-slate-100 my-1.5 mx-1.5"></div>
+
+            <div className="px-1.5">
+              <button
+                className="w-full cursor-pointer flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 rounded-xl hover:bg-rose-50/70 transition text-left"
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  handleLogout();
                 }}
               >
-                {[
-                  { label: "✦ Generate", path: "/generate" },
-                  { label: "📊 Dashboard", path: "/dashboard" },
-                ].map(({ label, path }) => (
-                  <button
-                    key={path}
-                    onClick={() => {
-                      navigate(path);
-                      setDrop(false);
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "9px 12px",
-                      border: "none",
-                      borderRadius: 7,
-                      background: "none",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      fontFamily: "'Outfit',sans-serif",
-                      fontSize: "0.85rem",
-                      color: "#24142b",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 7,
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "#f3e8ff")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "none")
-                    }
-                  >
-                    {label}
-                  </button>
-                ))}
-                <div
-                  style={{
-                    height: 1,
-                    background: "rgba(255,194,209,.4)",
-                    margin: "4px 0",
-                  }}
-                />
-                <button
-                  onClick={logout}
-                  style={{
-                    width: "100%",
-                    padding: "9px 12px",
-                    border: "none",
-                    borderRadius: 7,
-                    background: "none",
-                    textAlign: "left",
-                    cursor: "pointer",
-                    fontFamily: "'Outfit',sans-serif",
-                    fontSize: "0.85rem",
-                    color: "#c0392b",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 7,
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background = "#fdf0ef")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.background = "none")
-                  }
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </nav>
-    </>
+                <span className="text-base">
+                  <IoIosLogOut />
+                </span>
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 }

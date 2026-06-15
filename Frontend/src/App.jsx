@@ -7,6 +7,7 @@ import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Canvas from "./pages/Canvas.jsx";
 import Loader from "./components/Loader.jsx";
+import Footer from "./components/Footer.jsx";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/canvas" element={<Canvas />} />
         <Route path="/cta-score" element={<CTAScore />} />
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 };
