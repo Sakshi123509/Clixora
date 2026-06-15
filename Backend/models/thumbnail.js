@@ -27,7 +27,24 @@ const thumbnailSchema = new mongoose.Schema(
         },
         color: {
             type: String,
-        }
+        },
+        description:{
+            type:String,
+            default:"",
+        },
+        generatedUrls: {
+            type: [String], // Sahi Tarika: Cloudinary ke 4 URLs ka array
+        },
+        selectedUrl: {
+            type: String,   // Jo user ne select kiya editor ke liye
+        },
+        finalExportUrl: {
+            type: String,   // Canvas se edit hone ke baad ka final image
+        },
+        feedbackLogs: {
+            type: [String], // Gemini AI ke optimization tips
+        },
+
     }, { timestamps: true }
 )
 

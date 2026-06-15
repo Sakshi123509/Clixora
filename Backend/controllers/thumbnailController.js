@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import Thumbnail from "../models/thumbnail.js";
 
 export const saveThumbnail = async (req, res) => {
-    const { title, imageUrl, ctaScore, niche, style, color } = req.body;
+    const { title, imageUrl,description, ctaScore, niche, style, color } = req.body;
     const userId = req.user.id;
 
     try {
@@ -64,3 +64,4 @@ export const deleteThumbnail = async (req, res) => {
         });
     }
 };
+
