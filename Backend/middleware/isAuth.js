@@ -20,9 +20,13 @@ const isAuth = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
+    // 🌟 FIXED: Agar token me userId hai ya id hai, dono ko fallback ke sath support karega
     req.user = {
-      id: decoded.id,
+      id: decoded.userId || decoded.id,
     };
+
+    // Backup utility key taaki dashboard controllers ko bhi direct access mile
+    req.userId = decoded.userId || decoded.id;
 
     next();
 
