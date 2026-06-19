@@ -98,7 +98,7 @@ export const generateThumbnail = async (req, res) => {
 
     // 5.  SAVE TO MONGO DATABASE (Connecting to your Schema)
     const newThumbnailDocument = await Thumbnail.create({
-      userId: req.user ? req.user.id : "65f1a2b3c4d5e6f7a8b90000",// Temporary dummy Object ID until Auth middleware is linked
+      userId: req.user?.id || req.user?._id || req.userId || "65f1a2b3c4d5e6f7a8b90000",
       title,
       niche,
       description,
