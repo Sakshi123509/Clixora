@@ -1,2 +1,19 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap');
+/* src/index.css ke andar sabse upar add karein */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+
+@layer base {
+  html, body, #root {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f8fafc; /* slate-50 */
+    color: #0f172a; /* slate-900 */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Agar kisi matrix-tech component par Syne font chahiye code ke hisab se */
+  .font-syne {
+    font-family: 'Syne', sans-serif;
+  }
+}

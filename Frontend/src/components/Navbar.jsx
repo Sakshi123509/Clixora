@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { RiAiGenerate } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom"; // 🌟 Imported NavLink here
 import logoImg from "../assets/logo1.png";
 
-export default function Navbar({ logoImg }) {
+export default function Navbar() {
   const [user, setUser] = useState({
     name: "Guest User",
     email: "not-logged-in@clixora.ai",
@@ -16,15 +16,12 @@ export default function Navbar({ logoImg }) {
   // Fetch user information upon mount
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
-    const storedEmail =
-      localStorage.getItem("userEmail") || localStorage.getItem("email");
+    const storedEmail = localStorage.getItem("userEmail") || localStorage.getItem("email");
 
     if (storedName) {
       setUser({
         name: storedName,
-        email:
-          storedEmail ||
-          `${storedName.toLowerCase().replace(/\s+/g, "")}@clixora.ai`,
+        email: storedEmail || `${storedName.toLowerCase().replace(/\s+/g, "")}@clixora.ai`,
       });
     }
   }, []);
@@ -50,34 +47,61 @@ export default function Navbar({ logoImg }) {
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+      
+      {/* BRAND LOGO HEADER */}
       <div
-        className="flex items-center gap-2 font-black text-xl text-pink-600 tracking-tight"
+        className="flex items-center gap-2 font-black text-xl text-pink-600 tracking-tight cursor-pointer"
         style={{ fontFamily: "'Syne', sans-serif" }}
+        onClick={() => navigate("/")}
       >
         <span className="rounded-lg flex items-center justify-center">
-          <img
-            src={logoImg}
-            className="h-8 w-auto object-contain"
-            style={{ width: "100%" }}
-            alt="Logo"
-          />
+          <img src={logoImg} className="h-8 w-auto object-contain" alt="Logo" />
         </span>
         CLIXORA
       </div>
       
-      <div className="hidden sm:flex gap-6 font-semibold text-sm text-slate-600">
-        <a href="/" className="text-pink-600 border-b-2 border-pink-600 pb-1">
+      {/* ── DYNAMIC TRACKING NAVIGATION LINKS ── */}
+      <div className="hidden sm:flex gap-6 font-semibold text-sm">
+        
+        {/* HOME LINK */}
+        <NavLink 
+          to="/" 
+          end // Ensures exact root route mapping configuration
+          className={({ isActive }) => 
+            `pb-1 transition duration-200 ${
+              isActive ? "text-pink-600 border-b-2 border-pink-600" : "text-slate-600 hover:text-slate-900"
+            }`
+          }
+        >
           Home
-        </a>
-        <a href="/dashboard" className="hover:text-slate-900 transition">
+        </NavLink>
+
+        {/* DASHBOARD LINK */}
+        <NavLink 
+          to="/dashboard" 
+          className={({ isActive }) => 
+            `pb-1 transition duration-200 ${
+              isActive ? "text-pink-600 border-b-2 border-pink-600" : "text-slate-600 hover:text-slate-900"
+            }`
+          }
+        >
           Dashboard
-        </a>
-        <a href="/generate" className="hover:text-slate-900 transition">
+        </NavLink>
+
+        {/* GENERATOR MATRIX LINK */}
+        <NavLink 
+          to="/generate" 
+          className={({ isActive }) => 
+            `pb-1 transition duration-200 ${
+              isActive ? "text-pink-600 border-b-2 border-pink-600" : "text-slate-600 hover:text-slate-900"
+            }`
+          }
+        >
           Generator Matrix
-        </a>
+        </NavLink>
       </div>
 
-      {/* Profile Avatar Trigger & Dropdown Menu */}
+      {/* PROFILE AVATAR DROPDOWN STRUCTURE */}
       <div className="relative">
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -87,10 +111,7 @@ export default function Navbar({ logoImg }) {
         </button>
 
         {isDropdownOpen && (
-          <div
-            className="fixed inset-0 z-40 cursor-default"
-            onClick={() => setIsDropdownOpen(false)}
-          />
+          <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsDropdownOpen(false)} />
         )}
 
         {isDropdownOpen && (
@@ -113,30 +134,24 @@ export default function Navbar({ logoImg }) {
             </div>
 
             <div className="space-y-0.5 px-1.5">
-              <a
-                href="/dashboard"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-pink-600 transition"
-                onClick={() => setIsDropdownOpen(false)}
+              <button
+                onClick={() => { setIsDropdownOpen(false); navigate("/dashboard"); }}
+                className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-pink-600 transition cursor-pointer"
               >
-                <span className="text-base text-slate-400">
-                  <MdDashboard />
-                </span>
+                <span className="text-base text-slate-400"><MdDashboard /></span>
                 Dashboard Cluster
-              </a>
+              </button>
 
-              <a
-                href="/generate"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-pink-600 transition sm:hidden"
-                onClick={() => setIsDropdownOpen(false)}
+              <button
+                onClick={() => { setIsDropdownOpen(false); navigate("/generate"); }}
+                className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50 hover:text-pink-600 transition sm:hidden cursor-pointer"
               >
-                <span className="text-base text-slate-400">
-                  <RiAiGenerate />
-                </span>
+                <span className="text-base text-slate-400"><RiAiGenerate /></span>
                 Generator Matrix
-              </a>
+              </button>
             </div>
 
-            <div className="border-t border-slate-100 my-1.5 mx-1.5"></div>
+            <div className="border-t border-slate-100 my-1.5 mx-1.5" />
 
             <div className="px-1.5">
               <button
@@ -146,9 +161,7 @@ export default function Navbar({ logoImg }) {
                   handleLogout();
                 }}
               >
-                <span className="text-base">
-                  <IoIosLogOut />
-                </span>
+                <span className="text-base"><IoIosLogOut /></span>
                 Logout
               </button>
             </div>

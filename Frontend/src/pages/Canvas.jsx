@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios"; // Imports for cloud database sync
 import {
   MdArrowBack,
   MdTextFields,
@@ -9,20 +10,16 @@ import {
   MdLayers,
   MdTune,
   MdFontDownload,
-  MdLayersClear,
 } from "react-icons/md";
 import { HiOutlineSparkles } from "react-icons/hi";
 
-// Google Fonts ko dynamically inject kar rahe hain designer workflows ke liye
+// Google Fonts configuration setup
 const AVAILABLE_FONTS = [
-  // CATEGORY 1: HEAVY HEADLINES (High CTR / Attention Grabbers)
   { name: "Impact Standard", value: "Impact, Charcoal, sans-serif" },
   { name: "Anton (Bold Pop)", value: "'Anton', sans-serif" },
   { name: "Bebas Neue (Viral Style)", value: "'Bebas Neue', sans-serif" },
   { name: "Archivo Black (Ultra Thick)", value: "'Archivo Black', sans-serif" },
   { name: "Oswald (Strong Vertical)", value: "'Oswald', sans-serif" },
-
-  // CATEGORY 2: MODERN TECH & STARTUP (Premium SaaS / Coding / Business)
   { name: "Syne (Futuristic Tech)", value: "'Syne', sans-serif" },
   {
     name: "Space Grotesk (Startup Vibe)",
@@ -30,8 +27,6 @@ const AVAILABLE_FONTS = [
   },
   { name: "Montserrat (Premium Bold)", value: "'Montserrat', sans-serif" },
   { name: "Poppins (Clean Modern)", value: "'Poppins', sans-serif" },
-
-  // CATEGORY 3: GAMING & ENTERTAINMENT (Condensed/Aggressive)
   { name: "Teko (Gaming Intense)", value: "'Teko', sans-serif" },
 ];
 
@@ -40,9 +35,14 @@ export default function Canvas() {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
-  const { imageUrl, dbRecordId, title: initialTitle } = location.state || {};
+  const {
+    imageUrl,
+    dbRecordId,
+    title: initialTitle,
+    niche,
+  } = location.state || {};
 
-  // CORE ADVANCED STATES
+  // CORE STATE MANAGEMENT
   const [textLayers, setTextLayers] = useState([]);
   const [inputText, setInputText] = useState("");
   const [textColor, setTextColor] = useState("#ffffff");
@@ -50,6 +50,9 @@ export default function Canvas() {
   const [selectedFont, setSelectedFont] = useState(
     "Impact, Charcoal, sans-serif",
   );
+
+  // State controls for operations
+  const [isSaving, setIsSaving] = useState(false);
 
   // High Contrast Text Background Elements
   const [useBgBox, setUseBgBox] = useState(false);
@@ -68,9 +71,8 @@ export default function Canvas() {
   // Font stylesheets injection directly to document head dynamically
   useEffect(() => {
     const link = document.createElement("link");
-    // Is single query mein humne saare premium bold weights fetch kar liye hain
     link.href =
-      "https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Montserrat:wght@800;900&family=Oswald:wght@700&family=Poppins:wght@800;900&family=Space+Grotesk:wght@700&family=Syne:wght@800&family=Teko:wght@700&display=swap";
+      "https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Montserrat:wght=800;900&family=Oswald:wght=700&family=Poppins:wght=800;900&family=Space+Grotesk:wght=700&family=Syne:wght=800&family=Teko:wght=700&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
     return () => document.head.removeChild(link);
@@ -157,7 +159,14 @@ export default function Canvas() {
         }
       });
     };
-  }, [textLayers, selectedLayerId, imageUrl, brightness, saturation]);
+  }, [
+    textLayers,
+    selectedLayerId,
+    imageUrl,
+    brightness,
+    saturation,
+    selectedFont,
+  ]);
 
   // SYSTEM DRAG CAPTURE HANDLERS
   const handleCanvasMouseDown = (e) => {
@@ -234,7 +243,8 @@ export default function Canvas() {
     );
   };
 
-  const handleExportFinalThumbnail = () => {
+  // LOCAL DESKTOP EXPORT ENGINE
+  const handleDownloadLocalDesktop = () => {
     const canvas = canvasRef.current;
     const dataUrl = canvas.toDataURL("image/jpeg", 0.98);
     const downloadAnchorElement = document.createElement("a");
@@ -245,6 +255,62 @@ export default function Canvas() {
     document.body.removeChild(downloadAnchorElement);
   };
 
+  // BACKEND REPOSITORY SYNC CLOUD STORAGE ENGINE
+
+const handleSaveToDashboard = async () => {
+  setIsSaving(true);
+  try {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      alert("Canvas layout node workspace reference is empty.");
+      return;
+    }
+
+    // 1. Export canvas data compressed at 0.75 quality to stay safe from body size limits
+    const canvasDataUrl = canvas.toDataURL("image/jpeg", 0.75);
+
+    // 2. Extract database tracking target ID passed through React Router state
+    // Use dbRecordId from location.state
+    const targetId = dbRecordId;
+
+    if (!targetId) {
+      alert("Diagnostic Warning: Missing database record pointer. Please navigate here from a generated template matrix node.");
+      setIsSaving(false);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    // 3. Dispatch explicitly to your matching editorController.js endpoint route structure
+    const response = await axios.post(
+ "http://localhost:8000/api/editor/save-canvas",
+      {
+        thumbnailId: targetId,          // Plucks exactly what editorController expects
+        canvasImageBase64: canvasDataUrl // Base64 image payload block
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      }
+    );
+
+    if (response.data.success) {
+      alert("Canvas configuration committed and rendered successfully! 🚀");
+      navigate("/dashboard");
+    }
+  } catch (error) {
+    console.error("Canvas saving transmission failed:", error);
+    
+    // Print out the ACTUAL backend error message instead of masking it with your default string
+    const serverErrorMessage = error.response?.data?.error || error.response?.data?.message;
+    alert(serverErrorMessage ? `Server Exception: ${serverErrorMessage}` : "Failed to commit project storage block.");
+  } finally {
+    setIsSaving(false);
+  }
+};
+
   return (
     <div className="h-screen w-full bg-slate-100 text-slate-800 flex justify-between overflow-hidden font-sans antialiased">
       {/* LEFT COMPOSER SIDEBAR ENGINE */}
@@ -254,12 +320,12 @@ export default function Canvas() {
           <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
             <button
               onClick={() => navigate("/generate")}
-              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition"
+              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition cursor-pointer"
             >
               <MdArrowBack size={16} />
             </button>
             <div>
-              <h1 className="text-xs font-black text-slate-900 uppercase tracking-wider font-syne flex items-center gap-1">
+              <h1 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1">
                 <HiOutlineSparkles className="text-pink-500" /> Clixora Engine
                 V2
               </h1>
@@ -286,7 +352,7 @@ export default function Canvas() {
                 max="180"
                 value={brightness}
                 onChange={(e) => setBrightness(e.target.value)}
-                className="w-full accent-slate-900 h-1 bg-slate-200 rounded-lg appearance-none"
+                className="w-full accent-slate-900 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
               />
             </div>
 
@@ -301,7 +367,7 @@ export default function Canvas() {
                 max="200"
                 value={saturation}
                 onChange={(e) => setSaturation(e.target.value)}
-                className="w-full accent-pink-600 h-1 bg-slate-200 rounded-lg appearance-none"
+                className="w-full accent-pink-600 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
               />
             </div>
           </div>
@@ -339,7 +405,7 @@ export default function Canvas() {
                   setSelectedFont(e.target.value);
                   updateSelectedLayerProperties("font", e.target.value);
                 }}
-                className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold focus:outline-none focus:border-slate-900"
+                className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold focus:outline-none focus:border-slate-900 cursor-pointer"
               >
                 {AVAILABLE_FONTS.map((f, idx) => (
                   <option key={idx} value={f.value}>
@@ -442,7 +508,7 @@ export default function Canvas() {
               {selectedLayerId === null ? (
                 <button
                   onClick={handleAddNewTextLayer}
-                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs transition"
+                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs transition cursor-pointer"
                 >
                   + Append Text Block Layer
                 </button>
@@ -450,7 +516,7 @@ export default function Canvas() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setSelectedLayerId(null)}
-                    className="w-1/2 py-1.5 border border-slate-200 text-slate-600 font-bold rounded-md text-[11px]"
+                    className="w-1/2 py-1.5 border border-slate-200 text-slate-600 font-bold rounded-md text-[11px] cursor-pointer"
                   >
                     Deselect
                   </button>
@@ -462,7 +528,7 @@ export default function Canvas() {
                       setSelectedLayerId(null);
                       setInputText("");
                     }}
-                    className="w-1/2 py-1.5 bg-rose-50 text-rose-600 font-bold rounded-md text-[11px] border border-rose-200/50"
+                    className="w-1/2 py-1.5 bg-rose-50 text-rose-600 font-bold rounded-md text-[11px] border border-rose-200/50 cursor-pointer"
                   >
                     Delete Layer
                   </button>
@@ -502,15 +568,30 @@ export default function Canvas() {
           </div>
         </div>
 
-        {/* DOWNLOADING COMPOSITE TERMINAL HANDLER */}
-        <div className="pt-2">
-          <button
-            onClick={handleExportFinalThumbnail}
-            className="w-full flex items-center justify-center gap-1 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-black rounded-xl text-xs shadow-md transition transform hover:scale-[1.01]"
-          >
-            <MdDownload size={14} />
-            <span>Download High-CTR Asset</span>
-          </button>
+        {/* COMPOSITE DUAL TERMINAL ACTION CONTROLS */}
+        <div className="pt-3 border-t border-slate-100">
+          <div className="flex flex-col gap-2">
+            {/* LOCAL DESKTOP DOWNLOAD */}
+            <button
+              onClick={handleDownloadLocalDesktop}
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer select-none"
+            >
+              <span>📥 Download to Desktop</span>
+            </button>
+
+            {/* BACKEND MONGO STORAGE SAVE */}
+            <button
+              onClick={handleSaveToDashboard}
+              disabled={isSaving}
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 disabled:from-slate-200 disabled:to-slate-300 text-white disabled:text-slate-500 font-black rounded-xl text-xs transition shadow-md cursor-pointer select-none"
+            >
+              {isSaving ? (
+                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <span>💾 Save to Dashboard</span>
+              )}
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -528,7 +609,7 @@ export default function Canvas() {
             )}
           </div>
 
-          <div className="w-full aspect-video rounded-xl bg-slate-950 overflow-hidden relative cursor-crosshair border border-slate-900/10 shadow-inner">
+          <div className="w-full aspect-video rounded-xl bg-slate-100 overflow-hidden relative cursor-crosshair border border-slate-900/10 shadow-inner">
             <canvas
               ref={canvasRef}
               width={canvasWidth}
