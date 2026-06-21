@@ -3,8 +3,13 @@ dotenv.config();
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Thumbnail from "../models/thumbnail.js"; // Aapka Mongoose Model
 
+
+if (!process.env.GEMINI_API_KEY) {
+  console.error("🛑 CRITICAL SERVER CONFIG WARNING: GEMINI_API_KEY is missing inside your .env file!");
+}
+
+// 1. ENDPOINT: Calculate overall metrics layout
 export const CTAScore = async (req, res) => {
-  // 1. Extracting exactly 'imageUrl' and 'variantId' from the incoming request body
   const { imageUrl, variantId } = req.body;
 
   if (!imageUrl) {
@@ -20,14 +25,14 @@ export const CTAScore = async (req, res) => {
     }
 
     // 2. Fetch the external Cloudinary image stream bytes
-    const imageResponse = await fetch(imageUrl); // Using strict camelCase variable
+    const imageResponse = await fetch(imageUrl);
     if (!imageResponse.ok) throw new Error("Failed to fetch image from Cloudinary storage network.");
 
     // Auto-detect exact mime-type (image/png, image/jpeg, etc.) from network headers
     const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
     const imageBuffer = await imageResponse.arrayBuffer();
 
-    // 3. Initialize Google AI Core
+    // 3. Initialize Google AI Core securely
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
@@ -73,24 +78,8 @@ export const CTAScore = async (req, res) => {
     const rawResponse = result.response.text().trim();
     const parsedData = JSON.parse(rawResponse);
 
-    // if (variantId) {
-    //   // Stripping frontend variant index to find the main MongoDB Document ID
-    //   const coreDatabaseId = variantId.split("_variant_")[0];
-
-    //   await Thumbnail.findByIdAndUpdate(
-    //     coreDatabaseId,
-    //     {
-    //       ctaScore: parsedData.overall,               // Saving score to DB
-    //       feedbackLogs: parsedData.recommendations,  // Saving feedback tips to DB
-    //       imageUrl: imageUrl                          // Matching your exact schema field name
-    //     },
-    //     { new: true }
-    //   );
-    // }
-
     // 5. 💾 SAVE TO MONGO DATABASE (Updating using correct schema fields)
     if (variantId) {
-      // Clean up the conditional lookup to safely capture any ID variant structure
       const coreDatabaseId = variantId.includes("_variant_")
         ? variantId.split("_variant_")[0]
         : variantId;
@@ -116,5 +105,64 @@ export const CTAScore = async (req, res) => {
   } catch (error) {
     console.error("CTA Pipeline Exception Error:", error);
     return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// 2. ENDPOINT: Brutally honest feedback analysis pipeline
+export const auditThumbnail = async (req, res) => {
+  try {
+    const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+    const { imageUrl } = req.body;
+    if (!imageUrl) {
+      return res.status(400).json({ success: false, message: "Image URL parsing parameter is missing." });
+    }
+
+    const imageResponse = await fetch(imageUrl, {
+      headers: { 'Accept': 'image/*' },
+      signal: AbortSignal.timeout(15000)
+    });
+
+    if (!imageResponse.ok) {
+      throw new Error(`Failed to download resource node. Status received: ${imageResponse.status}`);
+    }
+
+    const arrayBuffer = await imageResponse.arrayBuffer();
+    const base64Data = Buffer.from(arrayBuffer).toString("base64");
+
+    const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const response = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              inlineData: {
+                mimeType: "image/jpeg",
+                data: base64Data
+              }
+            },
+            {
+              text: "You are an elite YouTube Thumbnail Designer and Growth Expert. Analyze this thumbnail image. Give exactly 3 brutally honest, highly actionable improvement points for text contrast, layout framing, and visual hierarchy to boost CTR. Keep each point under 2-3 short sentences. Be direct. Do not add conversational intro/outro text lines."
+            }
+          ]
+        }
+      ]
+    });
+
+    const feedbackText = response.response.text() || "No diagnostics data could be compiled by the model.";
+
+    return res.json({
+      success: true,
+      feedback: feedbackText
+    });
+
+  } catch (error) {
+    console.error("CRITICAL: Gemini Vision Core Pipeline Interrupted:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to audit image asset through remote Vision AI nodes."
+    });
   }
 };
