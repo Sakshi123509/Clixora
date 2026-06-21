@@ -266,8 +266,10 @@ export default function Canvas() {
     setIsSaving(true);
     try {
       const canvas = canvasRef.current;
-      const base64Data = canvas.toDataURL("image/jpeg", 0.9);
+      // High-quality jpeg compress snapshot
+      const base64Data = canvas.toDataURL("image/jpeg", 0.95);
 
+      // 🌟 FIX: Endpoint matches exactly with your routing matrix
       const response = await api.post("/api/thumbnails/save-canvas", {
         thumbnailId: dbRecordId,
         canvasImageBase64: base64Data,
@@ -294,34 +296,6 @@ export default function Canvas() {
       setIsSaving(false);
     }
   };
-  // Canvas.jsx ke handleSaveToDashboard function ke andar payload update karein:
-
-  // const handleSaveToDashboard = async () => {
-  //   if (!dbRecordId || !canvasRef.current) return;
-
-  //   try {
-  //     setIsSaving(true);
-  //     const canvasImageBase64 = canvasRef.current.toDataURL("image/jpeg", 0.9);
-
-  //     // Hit the refactored editor export endpoint safely using authenticated api
-  //     const response = await api.post("/api/editor/save-canvas", {
-  //       thumbnailId: dbRecordId, // Schema expects thumbnailId reference mapping
-  //       canvasImageBase64: canvasImageBase64,
-  //     });
-
-  //     if (response.data.success) {
-  //       alert(
-  //         "Composited viewport layers exported successfully to Cloudinary!",
-  //       );
-  //       navigate("/dashboard");
-  //     }
-  //   } catch (error) {
-  //     console.error("Canvas export pipe crashed:", error);
-  //     alert("Canvas state extraction failed to compile on backend stream.");
-  //   } finally {
-  //     setIsSaving(false);
-  //   }
-  // };
 
   return (
     <div className="h-screen w-full bg-slate-100 text-slate-800 flex justify-between overflow-hidden font-sans antialiased">
