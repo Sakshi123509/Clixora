@@ -12,6 +12,7 @@ import {
   MdFontDownload,
 } from "react-icons/md";
 import { HiOutlineSparkles } from "react-icons/hi";
+import api from "../api/apiInstance.js";
 
 // Google Fonts configuration setup
 const AVAILABLE_FONTS = [
@@ -257,59 +258,70 @@ export default function Canvas() {
 
   // BACKEND REPOSITORY SYNC CLOUD STORAGE ENGINE
 
-const handleSaveToDashboard = async () => {
-  setIsSaving(true);
-  try {
-    const canvas = canvasRef.current;
-    if (!canvas) {
-      alert("Canvas layout node workspace reference is empty.");
-      return;
+  const handleSaveToDashboard = async () => {
+    if (!dbRecordId) {
+      return alert("Invalid database session context frame mapping state.");
     }
 
-    // 1. Export canvas data compressed at 0.75 quality to stay safe from body size limits
-    const canvasDataUrl = canvas.toDataURL("image/jpeg", 0.75);
+    setIsSaving(true);
+    try {
+      const canvas = canvasRef.current;
+      const base64Data = canvas.toDataURL("image/jpeg", 0.9);
 
-    // 2. Extract database tracking target ID passed through React Router state
-    // Use dbRecordId from location.state
-    const targetId = dbRecordId;
+      const response = await api.post("/api/thumbnails/save-canvas", {
+        thumbnailId: dbRecordId,
+        canvasImageBase64: base64Data,
+      });
 
-    if (!targetId) {
-      alert("Diagnostic Warning: Missing database record pointer. Please navigate here from a generated template matrix node.");
-      setIsSaving(false);
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-
-    // 3. Dispatch explicitly to your matching editorController.js endpoint route structure
-    const response = await axios.post(
- "http://localhost:8000/api/editor/save-canvas",
-      {
-        thumbnailId: targetId,          // Plucks exactly what editorController expects
-        canvasImageBase64: canvasDataUrl // Base64 image payload block
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+      if (response.data.success) {
+        alert(
+          "Canvas graphics compiled and updated successfully inside Dashboard! 🚀",
+        );
+        navigate("/dashboard");
+      } else {
+        alert(
+          response.data.error ||
+            "Save operation pipeline returned negative responses.",
+        );
       }
-    );
-
-    if (response.data.success) {
-      alert("Canvas configuration committed and rendered successfully! 🚀");
-      navigate("/dashboard");
+    } catch (error) {
+      console.error("Canvas export binary compiler collapsed:", error);
+      alert(
+        error.response?.data?.error ||
+          "Network pipeline validation broke down.",
+      );
+    } finally {
+      setIsSaving(false);
     }
-  } catch (error) {
-    console.error("Canvas saving transmission failed:", error);
-    
-    // Print out the ACTUAL backend error message instead of masking it with your default string
-    const serverErrorMessage = error.response?.data?.error || error.response?.data?.message;
-    alert(serverErrorMessage ? `Server Exception: ${serverErrorMessage}` : "Failed to commit project storage block.");
-  } finally {
-    setIsSaving(false);
-  }
-};
+  };
+  // Canvas.jsx ke handleSaveToDashboard function ke andar payload update karein:
+
+  // const handleSaveToDashboard = async () => {
+  //   if (!dbRecordId || !canvasRef.current) return;
+
+  //   try {
+  //     setIsSaving(true);
+  //     const canvasImageBase64 = canvasRef.current.toDataURL("image/jpeg", 0.9);
+
+  //     // Hit the refactored editor export endpoint safely using authenticated api
+  //     const response = await api.post("/api/editor/save-canvas", {
+  //       thumbnailId: dbRecordId, // Schema expects thumbnailId reference mapping
+  //       canvasImageBase64: canvasImageBase64,
+  //     });
+
+  //     if (response.data.success) {
+  //       alert(
+  //         "Composited viewport layers exported successfully to Cloudinary!",
+  //       );
+  //       navigate("/dashboard");
+  //     }
+  //   } catch (error) {
+  //     console.error("Canvas export pipe crashed:", error);
+  //     alert("Canvas state extraction failed to compile on backend stream.");
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
 
   return (
     <div className="h-screen w-full bg-slate-100 text-slate-800 flex justify-between overflow-hidden font-sans antialiased">

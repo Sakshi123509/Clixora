@@ -24,7 +24,15 @@ function MatrixLoader({ message = "Synchronizing node credentials..." }) {
 }
 
 /* ── Input UI Context Atom ───────────────────────────────────── */
-function Field({ label, type = "text", placeholder, value, onChange, rightEl, icon }) {
+function Field({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  rightEl,
+  icon,
+}) {
   return (
     <div className="flex flex-col gap-1.5 w-full">
       <label className="text-[10px] tracking-widest uppercase font-mono font-bold text-slate-400">
@@ -37,10 +45,17 @@ function Field({ label, type = "text", placeholder, value, onChange, rightEl, ic
           </span>
         )}
         <input
-          type={type} placeholder={placeholder} value={value} onChange={onChange}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
           className={`w-full text-xs font-medium text-slate-700 placeholder-slate-300/95 bg-slate-50 border border-slate-200/80 rounded-xl outline-none transition-all focus:bg-white focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 ${icon ? "pl-10" : "pl-4"} ${rightEl ? "pr-10" : "pr-4"} py-3`}
         />
-        {rightEl && <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center">{rightEl}</div>}
+        {rightEl && (
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center">
+            {rightEl}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -54,12 +69,14 @@ function LoginPage({ onSwitch, setLoading, setLoaderMessage }) {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!email || !pw) return alert("Please populate all credential fragments.");
+    if (!email || !pw)
+      return alert("Please populate all credential fragments.");
     setLoaderMessage("Authenticating standard cluster...");
     setLoading(true);
     try {
       const data = await loginUser({ email, password: pw });
       if (data.token) {
+        localStorage.setItem("userEmail", data.email); // backend login response would need to include `email` too
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("userName", data.username);
@@ -83,29 +100,64 @@ function LoginPage({ onSwitch, setLoading, setLoaderMessage }) {
           </div>
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-xs font-black text-slate-900 tracking-wider uppercase">Welcome Back</h2>
-          <p className="text-[11px] font-bold text-slate-400 truncate">Sign in to initialize creator session</p>
+          <h2 className="text-xs font-black text-slate-900 tracking-wider uppercase">
+            Welcome Back
+          </h2>
+          <p className="text-[11px] font-bold text-slate-400 truncate">
+            Sign in to initialize creator session
+          </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-3.5">
-        <Field label="Email node address" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} icon={<MdMailOutline />} />
         <Field
-          label="Security Key Cipher" placeholder="••••••••••" value={pw} onChange={(e) => setPw(e.target.value)} type={showPw ? "text" : "password"} icon={<LockIconWrapper />}
-          rightEl={<button type="button" onClick={() => setShowPw(!showPw)} className="text-slate-400 cursor-pointer hover:text-pink-500 text-base transition-colors flex items-center">{showPw ? <IoMdEyeOff /> : <IoMdEye />}</button>}
+          label="Email node address"
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          icon={<MdMailOutline />}
+        />
+        <Field
+          label="Security Key Cipher"
+          placeholder="••••••••••"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+          type={showPw ? "text" : "password"}
+          icon={<LockIconWrapper />}
+          rightEl={
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="text-slate-400 cursor-pointer hover:text-pink-500 text-base transition-colors flex items-center"
+            >
+              {showPw ? <IoMdEyeOff /> : <IoMdEye />}
+            </button>
+          }
         />
       </div>
 
       <div className="text-right">
-        <span className="text-[10px] text-slate-400 hover:text-pink-600 transition cursor-pointer font-bold uppercase tracking-wider">Forgot passkey cipher?</span>
+        <span className="text-[10px] text-slate-400 hover:text-pink-600 transition cursor-pointer font-bold uppercase tracking-wider">
+          Forgot passkey cipher?
+        </span>
       </div>
 
-      <button onClick={handleLogin} className="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 cursor-pointer text-white font-black text-xs rounded-xl shadow-md transition transform active:scale-98 tracking-wider uppercase">
+      <button
+        onClick={handleLogin}
+        className="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 cursor-pointer text-white font-black text-xs rounded-xl shadow-md transition transform active:scale-98 tracking-wider uppercase"
+      >
         Authenticate Cluster →
       </button>
 
       <p className="text-center text-xs font-bold text-slate-400 mt-1">
-        New to the matrix? <span onClick={onSwitch} className="text-pink-500 font-extrabold hover:underline cursor-pointer ml-1">Create instance node</span>
+        New to the matrix?{" "}
+        <span
+          onClick={onSwitch}
+          className="text-pink-500 font-extrabold hover:underline cursor-pointer ml-1"
+        >
+          Create instance node
+        </span>
       </p>
     </div>
   );
@@ -146,27 +198,73 @@ function SignupPage({ onSwitch, setLoading, setLoaderMessage }) {
           </div>
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-xs font-black text-slate-900 tracking-wider uppercase">Join Clixora Matrix</h2>
-          <p className="text-[11px] font-bold text-slate-400 truncate">Spawn clean node instance profile</p>
+          <h2 className="text-xs font-black text-slate-900 tracking-wider uppercase">
+            Join Clixora Matrix
+          </h2>
+          <p className="text-[11px] font-bold text-slate-400 truncate">
+            Spawn clean node instance profile
+          </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        <Field label="Profile Node Identifier" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} icon={<MdOutlinePerson />} />
-        <Field label="Email Node Address" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} icon={<MdMailOutline />} />
         <Field
-          label="Security Key Cipher" placeholder="Create account key" value={pw} onChange={(e) => setPw(e.target.value)} type={showPw ? "text" : "password"} icon={<LockIconWrapper />}
-          rightEl={<button type="button" onClick={() => setShowPw(!showPw)} className="text-slate-400 cursor-pointer hover:text-pink-500 text-base transition-colors flex items-center">{showPw ? <IoMdEyeOff /> : <IoMdEye />}</button>}
+          label="Profile Node Identifier"
+          placeholder="Your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          icon={<MdOutlinePerson />}
         />
-        <Field label="Verify Passkey Match" type="password" placeholder="Repeat account key" value={confirm} onChange={(e) => setConfirm(e.target.value)} icon={<LockIconWrapper />} />
+        <Field
+          label="Email Node Address"
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          icon={<MdMailOutline />}
+        />
+        <Field
+          label="Security Key Cipher"
+          placeholder="Create account key"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+          type={showPw ? "text" : "password"}
+          icon={<LockIconWrapper />}
+          rightEl={
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="text-slate-400 cursor-pointer hover:text-pink-500 text-base transition-colors flex items-center"
+            >
+              {showPw ? <IoMdEyeOff /> : <IoMdEye />}
+            </button>
+          }
+        />
+        <Field
+          label="Verify Passkey Match"
+          type="password"
+          placeholder="Repeat account key"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          icon={<LockIconWrapper />}
+        />
       </div>
 
-      <button onClick={handleRegister} className="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 cursor-pointer text-white font-black text-xs rounded-xl shadow-md transition transform active:scale-98 tracking-wider uppercase mt-1">
+      <button
+        onClick={handleRegister}
+        className="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 cursor-pointer text-white font-black text-xs rounded-xl shadow-md transition transform active:scale-98 tracking-wider uppercase mt-1"
+      >
         Deploy Node Instance →
       </button>
 
       <p className="text-center text-xs font-bold text-slate-400 mt-1">
-        Already verified cluster? <span onClick={onSwitch} className="text-pink-500 font-extrabold hover:underline cursor-pointer ml-1">Sign In</span>
+        Already verified cluster?{" "}
+        <span
+          onClick={onSwitch}
+          className="text-pink-500 font-extrabold hover:underline cursor-pointer ml-1"
+        >
+          Sign In
+        </span>
       </p>
     </div>
   );
@@ -197,12 +295,16 @@ export default function AuthPages() {
         <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-400/10 blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-[380px] flex flex-col">
-          
           <div className="flex items-center gap-2 justify-center mb-6">
             <div className="flex gap-1">
-              {["bg-pink-500", "bg-rose-500", "bg-slate-400"].map((color, i) => (
-                <div key={i} className={`w-1.5 h-1.5 rounded-full ${color}`} />
-              ))}
+              {["bg-pink-500", "bg-rose-500", "bg-slate-400"].map(
+                (color, i) => (
+                  <div
+                    key={i}
+                    className={`w-1.5 h-1.5 rounded-full ${color}`}
+                  />
+                ),
+              )}
             </div>
             <span className="text-[11px] font-syne font-black tracking-[0.3em] text-slate-800 uppercase">
               Clixora Engine Matrix
@@ -210,17 +312,37 @@ export default function AuthPages() {
           </div>
 
           <div className="grid grid-cols-2 gap-1 bg-slate-200/50 border border-slate-200/30 p-1 rounded-2xl mb-4 shadow-inner">
-            <button onClick={() => setPage("login")} className={`py-2 text-xs cursor-pointer font-black tracking-wider uppercase rounded-xl transition-all ${page === "login" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}>Sign In</button>
-            <button onClick={() => setPage("signup")} className={`py-2 text-xs cursor-pointer font-black tracking-wider uppercase rounded-xl transition-all ${page === "signup" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}>Register</button>
+            <button
+              onClick={() => setPage("login")}
+              className={`py-2 text-xs cursor-pointer font-black tracking-wider uppercase rounded-xl transition-all ${page === "login" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => setPage("signup")}
+              className={`py-2 text-xs cursor-pointer font-black tracking-wider uppercase rounded-xl transition-all ${page === "signup" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            >
+              Register
+            </button>
           </div>
 
           <div className="bg-white border border-slate-200/70 rounded-3xl p-5 shadow-xl shadow-slate-900/[0.02] relative">
             <div className="absolute top-0 left-10 right-10 h-px bg-gradient-to-r from-transparent via-pink-400/30 to-transparent" />
             <div>
               {page === "login" ? (
-                <LoginPage key="login" onSwitch={() => setPage("signup")} setLoading={setLoading} setLoaderMessage={setLoaderMessage} />
+                <LoginPage
+                  key="login"
+                  onSwitch={() => setPage("signup")}
+                  setLoading={setLoading}
+                  setLoaderMessage={setLoaderMessage}
+                />
               ) : (
-                <SignupPage key="signup" onSwitch={() => setPage("login")} setLoading={setLoading} setLoaderMessage={setLoaderMessage} />
+                <SignupPage
+                  key="signup"
+                  onSwitch={() => setPage("login")}
+                  setLoading={setLoading}
+                  setLoaderMessage={setLoaderMessage}
+                />
               )}
             </div>
           </div>

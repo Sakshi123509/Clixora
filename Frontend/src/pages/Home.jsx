@@ -1,10 +1,38 @@
 import React, { useState } from "react";
 import logoImg from "../assets/logo1.png";
-import Navbar from "../components/Navbar"; // <-- Imported here
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { motion, AnimatePresence } from "motion/react"; // <-- Added AnimatePresence for smooth tab switching
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState(0);
+
+  // Animation Variants (Reusable settings)
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "outCubic" },
+    },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 }, // Elements appear one after another
+    },
+  };
+
+  const textVariant = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100, damping: 20 },
+    },
+  };
 
   const coreFeatures = [
     {
@@ -120,9 +148,13 @@ export default function HomePage() {
     },
   ];
 
+  const visualStates = {
+    initialState: { opacity: 0, y: 50 }, // Starts invisible and 50px lower
+    animateState: { opacity: 1, y: 0 }, // Ends fully visible and in its correct spot
+  };
   return (
+
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans relative overflow-hidden flex flex-col justify-between">
-      {/* Dynamic Keyframes for Sci-Fi Card Drawing Effects */}
       <style>{`
         @keyframes border-draw {
           0% { border-color: rgba(226, 232, 240, 0.8); }
@@ -132,36 +164,36 @@ export default function HomePage() {
         .animate-border-glow:hover {
           animation: border-draw 4s linear infinite;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght=700;800&family=Outfit:wght=400;500;600;700&display=swap');
         .font-outfit { font-family: 'Outfit', sans-serif; }
       `}</style>
 
-      {/* Absolute Background Image Layer strictly for this section */}
+      {/* Background Image Layer */}
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none -z-10 opacity-15"
         style={{ backgroundImage: `url(${logoImg})` }}
       />
-
-      {/* ── HIGH-TECH GRADIENT BACKGROUND ORBS ── */}
+      {/* Orbs Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute w-[650px] h-[650px] -top-[250px] -left-[150px] rounded-full bg-pink-500/10 blur-[40px]" />
         <div className="absolute w-[550px] h-[550px] -bottom-[150px] -right-[100px] rounded-full bg-indigo-500/10 blur-[50px]" />
       </div>
-
       <div className="relative z-10 font-outfit flex-grow">
-        {/* Render New Componentized Navbar */}
         <Navbar logoImg={logoImg} />
 
-        {/* ── SPLIT HERO SECTION ── */}
-        {/* ── SPLIT HERO SECTION ── */}
-        <header className="max-w-5xl mx-auto py-20 md:py-28 px-6 min-h-[80vh] flex flex-col justify-center items-center text-center relative z-10">
-          {/* The isolated background layer that sits strictly behind this specific content box */}
+        {/* ── HERO SECTION (Fades in on load) ── */}
+        <motion.header
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="max-w-5xl mx-auto py-20 md:py-28 px-6 min-h-[80vh] flex flex-col justify-center items-center text-center relative z-10"
+        >
           <div
             className="absolute inset-0 max-w-4xl mx-auto bg-contain bg-center bg-no-repeat pointer-events-none -z-10 opacity-10"
             style={{ backgroundImage: `url(${logoImg})` }}
           />
 
-          <div className="animate-fade-in-up">
+          <div>
             <span className="bg-gradient-to-r from-pink-500/10 to-indigo-500/10 text-slate-900 text-xs font-mono font-bold tracking-widest px-4 py-2 rounded-full inline-flex items-center gap-2 mb-6 border border-pink-200/60 shadow-sm backdrop-blur-md uppercase">
               <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
@@ -189,27 +221,38 @@ export default function HomePage() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
-            <a
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
               href="/generate"
-              className="w-full sm:w-auto text-center bg-pink-600 hover:bg-pink-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-pink-600/20 transition-all transform hover:-translate-y-0.5 tracking-tight text-sm md:text-base"
+              className="w-full sm:w-auto text-center bg-pink-600 hover:bg-pink-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-pink-600/20 transition-all tracking-tight text-sm md:text-base"
             >
               🚀 Launch Generator Matrix
-            </a>
-            <a
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
               href="/dashboard"
               className="w-full sm:w-auto text-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-8 py-4 rounded-xl transition shadow-sm tracking-tight text-sm md:text-base"
             >
               View Active Dashboard
-            </a>
+            </motion.a>
           </div>
-        </header>
+        </motion.header>
 
-        {/* ── ✨ INTERACTIVE CORE CAPABILITIES SECTION ✨ ── */}
+        {/* ── CORE CAPABILITIES SECTION (Scroll-triggered Animation) ── */}
         <section className="text-slate-800 py-20 px-6 relative overflow-hidden border-y border-slate-200/50">
           <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
           <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 items-center relative z-10">
-            <div className="md:col-span-5 space-y-4 order-2 md:order-1">
+            {/* Left side tabs */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={staggerContainer}
+              className="md:col-span-5 space-y-4 order-2 md:order-1"
+            >
               <div className="mb-6">
                 <span className="text-xs font-bold font-mono tracking-widest text-pink-600 uppercase">
                   Core Engine Capabilities
@@ -223,7 +266,8 @@ export default function HomePage() {
               </div>
 
               {coreFeatures.map((item, index) => (
-                <button
+                <motion.button
+                  variants={fadeInUp}
                   key={index}
                   onClick={() => setActiveTab(index)}
                   className={`w-full cursor-pointer text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${
@@ -245,29 +289,39 @@ export default function HomePage() {
                       {item.badge}
                     </span>
                   </div>
-                </button>
+                </motion.button>
               ))}
-            </div>
+            </motion.div>
 
-            <div className="md:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-xl relative min-h-[320px] flex flex-col justify-between backdrop-blur-sm order-1 md:order-2">
-              <div>
-                <span className="px-3 py-1 text-[10px] font-mono font-bold bg-pink-50 text-pink-600 rounded-md border border-pink-100 inline-block mb-4">
-                  {coreFeatures[activeTab].badge}
-                </span>
-                <h3
-                  className="text-xl md:text-2xl font-bold text-slate-900 mb-2"
-                  style={{ fontFamily: "'Syne', sans-serif" }}
+            {/* Right Side Content Box (Smooth content swap using AnimatePresence) */}
+            <div className="md:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-xl relative min-h-[340px] flex flex-col justify-between backdrop-blur-sm order-1 md:order-2">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, x: 15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -15 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {coreFeatures[activeTab].title}
-                </h3>
-                <p className="text-pink-600 text-sm font-semibold tracking-wide mb-3">
-                  "{coreFeatures[activeTab].tagline}"
-                </p>
-                <p className="text-slate-600 text-sm leading-relaxed max-w-xl">
-                  {coreFeatures[activeTab].desc}
-                </p>
-              </div>
+                  <span className="px-3 py-1 text-[10px] font-mono font-bold bg-pink-50 text-pink-600 rounded-md border border-pink-100 inline-block mb-4">
+                    {coreFeatures[activeTab].badge}
+                  </span>
+                  <h3
+                    className="text-xl md:text-2xl font-bold text-slate-900 mb-2"
+                    style={{ fontFamily: "'Syne', sans-serif" }}
+                  >
+                    {coreFeatures[activeTab].title}
+                  </h3>
+                  <p className="text-pink-600 text-sm font-semibold tracking-wide mb-3">
+                    "{coreFeatures[activeTab].tagline}"
+                  </p>
+                  <p className="text-slate-600 text-sm leading-relaxed max-w-xl">
+                    {coreFeatures[activeTab].desc}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
 
+              {/* Progress bar and stat */}
               <div className="mt-6 pt-6 border-t border-slate-100 flex items-center gap-6">
                 <div>
                   <div className="text-3xl font-black font-mono text-slate-900 tracking-tight">
@@ -278,9 +332,10 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-pink-500 transition-all duration-500 rounded-full"
-                    style={{
+                  <motion.div
+                    className="h-full bg-pink-500 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{
                       width:
                         activeTab === 0
                           ? "93.4%"
@@ -288,6 +343,7 @@ export default function HomePage() {
                             ? "75%"
                             : "100%",
                     }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                   />
                 </div>
               </div>
@@ -295,7 +351,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── 💻 HOW CLIXORA WORKS SECTION ── */}
+        {/* ── HOW CLIXORA WORKS SECTION (Staggered load on scroll) ── */}
         <section className="max-w-7xl mx-auto px-6 py-20 text-center">
           <div className="mb-16">
             <h2
@@ -313,11 +369,19 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 items-stretch">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 items-stretch"
+          >
             {howItWorksSteps.map((step, idx) => (
-              <div
+              <motion.div
+                variants={fadeInUp}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
                 key={idx}
-                className="backdrop-blur-md border-2 border-slate-100/80 rounded-2xl p-6 md:p-8 text-left relative overflow-hidden transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl group flex flex-col justify-between min-h-[550px] animate-border-glow bg-white"
+                className="backdrop-blur-md border-2 border-slate-100/80 rounded-2xl p-6 md:p-8 text-left relative overflow-hidden group flex flex-col justify-between min-h-[550px] animate-border-glow bg-white shadow-sm hover:shadow-2xl"
                 style={{
                   backgroundImage: step.bgImage
                     ? `linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.98)), url(${step.bgImage})`
@@ -326,6 +390,7 @@ export default function HomePage() {
                   backgroundPosition: "center",
                 }}
               >
+                {/* Tech Corners */}
                 <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
                 <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
                 <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
@@ -383,12 +448,12 @@ export default function HomePage() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
-        {/* ── DASHBOARD PROJECTS SECTION ── */}
+        {/* ── DASHBOARD PROJECTS SECTION (Scroll animation) ── */}
         <main className="max-w-6xl mx-auto px-6 pb-24">
           <div className="flex justify-between items-center mb-8">
             <h2
@@ -405,11 +470,19 @@ export default function HomePage() {
             </a>
           </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid sm:grid-cols-2 md:grid-cols-3 gap-6"
+          >
             {recentDrafts.map((draft, idx) => (
-              <div
+              <motion.div
+                variants={fadeInUp}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
                 key={idx}
-                className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 group cursor-pointer relative overflow-hidden"
+                className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl transition duration-300 group cursor-pointer relative overflow-hidden"
               >
                 <div
                   className={`w-full aspect-video bg-gradient-to-br ${draft.bgGradient} rounded-xl mb-4 flex items-center justify-center text-4xl shadow-inner overflow-hidden`}
@@ -441,18 +514,14 @@ export default function HomePage() {
                     Predictive CTR
                   </span>
                   <span
-                    className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
-                      draft.score >= 85
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "bg-amber-50 text-amber-700"
-                    }`}
+                    className={`text-xs font-bold px-2.5 py-1 rounded-lg ${draft.score >= 85 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
                   >
                     {draft.score}% Score
                   </span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </main>
       </div>
     </div>
