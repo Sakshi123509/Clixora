@@ -14,6 +14,8 @@ import { RiLoader4Line } from "react-icons/ri";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import logoImg from "../assets/logo1.png";
+// Dashboard.jsx ke useEffect ke andar fetch logic ko badlein:
+import api from "../api/apiInstance.js"; // Standard Instance load karein
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -44,29 +46,22 @@ export default function Dashboard() {
       : 0;
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchProjects = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+        setIsLoading(true);
+        // Correct API Base Path Mapping targeting Refactored Route
+        const { data } = await api.get("/api/dashboard/saved-projects");
 
-        const response = await axios.get(
-          "http://localhost:8000/api/dashboard/saved-projects",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-
-        if (response.data.success) {
-          setProjects(response.data.projects || []);
+        if (data.success) {
+          setProjects(data.projects || []);
         }
       } catch (error) {
-        console.error("Dashboard syncing crashed:", error);
+        console.error("Dashboard synchronization aborted:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchDashboardData();
+    fetchProjects();
   }, []);
 
   const handleDeleteProject = async (id, e) => {
@@ -78,14 +73,9 @@ export default function Dashboard() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(
-        `http://localhost:8000/api/dashboard/project/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }, // SECURE EXPLICIT DISPATCH
-        },
-      );
-      if (response.data.success) {
-        setProjects((prev) => prev.filter((project) => project._id !== id));
+      const { data } = await api.delete(`/api/dashboard/project/${id}`);
+      if (data.success) {
+        setProjects((prev) => prev.filter((p) => p._id !== id));
       }
     } catch (error) {
       console.error("Purge operations aborted:", error);

@@ -3,12 +3,20 @@ import Thumbnail from "../models/thumbnail.js";
 
 export const saveCanvasExport = async (req, res) => {
   const { thumbnailId, canvasImageBase64 } = req.body;
+  const loggedInUserId = req.user?.userId || req.user?.id || req.userId;
 
   if (!thumbnailId || !canvasImageBase64) {
     return res.status(400).json({ success: false, error: "Missing thumbnailId or base64 data" });
   }
 
   try {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
+
     const parts = canvasImageBase64.split(",");
     const base64Data = parts.length > 1 ? parts[1] : parts[0];
     const buffer = Buffer.from(base64Data, "base64");
@@ -22,28 +30,26 @@ export const saveCanvasExport = async (req, res) => {
           else resolve(result);
         }
       )
-      .end(buffer);
+        .end(buffer);
     });
     console.log("✅ Cloudinary Upload Success:", uploadResult.secure_url);
 
     console.log(`🔎 Searching Database for Thumbnail ID: ${thumbnailId}`);
-    
-    // Mongoose update option fix ke sath 🚀
-    const updatedDocument = await Thumbnail.findByIdAndUpdate(
-      thumbnailId,
-      { 
-        finalExportUrl: uploadResult.secure_url,
-        isEdited: true 
-      },
-      { returnDocument: 'after' } 
+
+
+    // 2. Update the query to use loggedInUserId instead of req.userId:
+    const updatedDocument = await Thumbnail.findOneAndUpdate(
+      { _id: thumbnailId, userId: loggedInUserId }, // Changed here
+      { finalExportUrl: uploadResult.secure_url, isEdited: true },
+      { new: true }
     );
 
-    // 🚨 Agar ID database me nahi mili toh server crash nahi hoga:
+    //  Agar ID database me nahi mili toh server crash nahi hoga:
     if (!updatedDocument) {
       console.error(`❌ DB Error: ID ${thumbnailId} does not exist in MongoDB!`);
-      return res.status(404).json({ 
-        success: false, 
-        error: `Database me is ID (${thumbnailId}) ka koi thumbnail nahi mila. Fresh generation se test karein.` 
+      return res.status(404).json({
+        success: false,
+        error: `Database me is ID (${thumbnailId}) ka koi thumbnail nahi mila. Fresh generation se test karein.`
       });
     }
 
@@ -54,7 +60,7 @@ export const saveCanvasExport = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("💥 Canvas export tracking pipeline broken:", error);
+    console.error(" Canvas export tracking pipeline broken:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
 };

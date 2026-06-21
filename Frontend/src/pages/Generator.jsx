@@ -16,6 +16,7 @@ import { RiLoader4Line } from "react-icons/ri";
 import logoImg from "../assets/logo1.png";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import api from "../api/apiInstance";
 
 export default function Generate() {
   const navigate = useNavigate();
@@ -44,15 +45,14 @@ export default function Generate() {
       const token = localStorage.getItem("token");
 
       // 🌟 FIXED: Headers ko body object se bahar teesre parameter (argument) me rakha hai
-      const response = await axios.post(
-        "http://localhost:8000/api/thumbnails/generate",
+      const response = await api.post(
+        "/api/generate",
         {
           title,
-          description,
           niche,
           style,
           color,
-          // Yahan se headers hata diya
+          description,
         },
         {
           headers: {

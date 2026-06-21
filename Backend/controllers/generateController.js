@@ -1,10 +1,8 @@
-
 import { v2 as cloudinary } from "cloudinary";
 import Thumbnail from "../models/thumbnail.js"; // Aapka Mongoose Schema Model
 import { User } from "../models/usermodel.js";
 
 const uploadToCloudinary = (buffer) => {
-  // Config will call in runtime, dotenv already loaded
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -52,8 +50,13 @@ const generateImageFromCloudflare = async (prompt) => {
 };
 
 export const generateThumbnail = async (req, res) => {
-  const { style, niche, description, color, title } = req.body;
+  // 1. Extract Valid User ID with Fallbacks
+  const userId = req.user?.userId || req.user?.id || req.user?._id || req.userId || "65f1a2b3c4d5e6f7a8b90000";
 
+  // 2. Destructure Incoming Request Body
+  const { title, style, niche, description, color } = req.body;
+
+  // 3. Validation Check
   if (!style || !niche || !color || !title) {
     return res.status(400).json({
       success: false,
@@ -62,67 +65,51 @@ export const generateThumbnail = async (req, res) => {
   }
 
   try {
-    // 1. Build 4 Varied Variant Prompts
-    // const prompts = [
-    //   `YouTube thumbnail, ${niche} topic, title text "${title}", ${color} color scheme, ${style} style, cinematic lighting, high contrast background, professional design, sharp details, 16:9 aspect ratio`,
-    //   `YouTube thumbnail, ${niche} channel, "${title}", clean minimalist layout, ${color} color palette, ${style} aesthetic, soft studio lighting, bold typography, professional graphic design, 16:9`,
-    //   `YouTube thumbnail, ${niche} niche, topic "${title}", vibrant ${color} colors, ${style} style, bright lighting, bold text design, high saturation, eye-catching composition, 16:9`,
-    //   `YouTube thumbnail, educational ${niche} video, "${title}", ${color} accent colors, ${style} design style, clean background, clear typography, infographic layout, professional look, 16:9`
-    // ];
-
+    // 4. Build 4 Varied Variant Prompts
     const prompts = [
-      // Prompt 1: Heavy Text Focus + Dynamic Scene
       `A high-impact YouTube thumbnail. In the center, ultra-bold cinematic typography reading exactly "${title}". The entire background scene must dynamically illustrate: ${description}. Graphics layout, ${color} color palette, ${style} aesthetic, dramatic studio lighting, high contrast, sharp details, 16:9 aspect ratio`,
-
-      // Prompt 2: 3D Pop Style + Immersive Elements
       `Premium YouTube thumbnail design for ${niche} video. Large ultra-sharp 3D text overlay displaying "${title}" prominently in focus. The background environment wraps around the text with elements of: ${description}. Neon ${color} accents, vivid ${style} graphics, eye-catching composition for maximum CTR, 16:9`,
-
-      // Prompt 3: Stylized Character/Object Action + Clear Title
       `Vibrant professional YouTube thumbnail graphic. Clean, massive title design showing exactly "${title}". The scene features highly detailed creative visuals matching: ${description}. Rendered in customized ${style} elements, rich ${color} color scheme, studio depth of field, high resolution, 16:9`,
-
-      // Prompt 4: Clean Modern Layout + Core Topic Graphics
       `Modern minimal YouTube thumbnail layout. Crisp bold typography framing the text "${title}". The background atmosphere perfectly visualizes the theme of: ${description}. Designed in professional ${style} style, glowing ${color} accent lights, premium high-contrast vector elements, 16:9`
     ];
-    // 2. Resolve AI Image Generation Buffers in Parallel
+
+    // 5. Generate and Upload Images in Parallel
     const imageBuffers = await Promise.all(
       prompts.map((prompt) => generateImageFromCloudflare(prompt))
     );
 
-    // 3. Dispatch Parallel Buffers to Cloudinary Target Folder Stream
     const uploadResults = await Promise.all(
       imageBuffers.map((buffer) => uploadToCloudinary(buffer))
     );
 
-    // 4. Collect secure Cloudinary URL arrays
     const secureUrls = uploadResults.map((r) => r.secure_url);
 
-    // 5.  SAVE TO MONGO DATABASE (Connecting to your Schema)
+    // 6. SAVE TO MONGO DATABASE (Using the extracted userId variable 🌟)
     const newThumbnailDocument = await Thumbnail.create({
-      userId: req.user?.id || req.user?._id || req.userId || "65f1a2b3c4d5e6f7a8b90000",
+      userId: userId, // Perfectly synced with verified user context now
       title,
       niche,
       description,
       style,
-      color, // Mapping incoming color state to Schema's colorPalette key
-      generatedUrls: secureUrls, // Saving all 4 dynamic Cloudinary links inside the single document array
-      imageUrl: secureUrls[0],   // Default preview image standard fallback
-      ctaScore: null,            // Kept null till explicit user click tracking evaluation
+      color,
+      generatedUrls: secureUrls,
+      imageUrl: secureUrls[0],
+      ctaScore: null,
     });
 
-    // 6. Transpile Response payload exactly matching your React Form code structure loops (.map)
+    // 7. Map Response payload structure for frontend UI consumption
     const frontendMatrixResponse = secureUrls.map((url, index) => ({
-      _id: `${newThumbnailDocument._id}_variant_${index}`, // Creates unique front keys using parent record ID
-      dbRecordId: newThumbnailDocument._id, // References root document record for patch requests (Check Score/Canvas actions)
+      _id: `${newThumbnailDocument._id}_variant_${index}`,
+      dbRecordId: newThumbnailDocument._id,
       title: newThumbnailDocument.title,
       niche: newThumbnailDocument.niche,
       style: newThumbnailDocument.style,
       color: newThumbnailDocument.color,
       description: newThumbnailDocument.description,
       ctaScore: newThumbnailDocument.ctaScore,
-      imageUrl: url, // Injecting exact specific Cloudinary URL for that variant card block
+      imageUrl: url,
     }));
 
-    // Successful Dispatch
     return res.status(200).json({
       success: true,
       data: frontendMatrixResponse

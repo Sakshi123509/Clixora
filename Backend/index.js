@@ -9,7 +9,6 @@ import generateRoutes from "./routes/generateRoutes.js";
 import thumbnailRoutes from "./routes/thumbnailRoutes.js";
 import { v2 as cloudinary } from 'cloudinary';
 import aiAuditRoutes from "./routes/aiAuditRoutes.js";
-import editorRoutes from "./routes/editorRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 connectDB();
@@ -34,8 +33,9 @@ app.get('/', (req, res) => {res.send("Welcome to Thumbnail generator Platform")}
 app.use("/api/auth", authRoutes);
 app.use("/api/generate", generateRoutes);
 app.use("/api/thumbnails", thumbnailRoutes);
-app.use("/api/editor", editorRoutes);
 app.use("/api/dashboard", dashboardRoutes); 
+app.use("/api/audit", aiAuditRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

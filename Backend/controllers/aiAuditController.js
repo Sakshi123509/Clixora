@@ -1,10 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 1. Correct SDK Initialization (Uses GoogleGenerativeAI constructor)
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export const auditThumbnail = async (req, res) => {
   try {
+    const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const { imageUrl } = req.body;
 
     if (!imageUrl) {
@@ -29,7 +29,7 @@ export const auditThumbnail = async (req, res) => {
     console.log("Image successfully compiled to Base64 payload block. Dispatching to Gemini Vision engine...");
 
     // 3. 🌟 FIX: Initialize the model instance before calling generateContent
-    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // 4. Correct API Method call mapping sequence
     const response = await model.generateContent([

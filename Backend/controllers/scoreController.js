@@ -13,23 +13,23 @@ export const CTAScore = async (req, res) => {
 
   try {
     if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ 
-        success: false, 
-        error: "GEMINI_API_KEY configuration is missing inside the .env file." 
+      return res.status(500).json({
+        success: false,
+        error: "GEMINI_API_KEY configuration is missing inside the .env file."
       });
     }
 
     // 2. Fetch the external Cloudinary image stream bytes
     const imageResponse = await fetch(imageUrl); // Using strict camelCase variable
     if (!imageResponse.ok) throw new Error("Failed to fetch image from Cloudinary storage network.");
-    
+
     // Auto-detect exact mime-type (image/png, image/jpeg, etc.) from network headers
     const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
     const imageBuffer = await imageResponse.arrayBuffer();
 
     // 3. Initialize Google AI Core
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // 4. Request Structured JSON Output from Gemini
     const result = await model.generateContent({
@@ -73,29 +73,46 @@ export const CTAScore = async (req, res) => {
     const rawResponse = result.response.text().trim();
     const parsedData = JSON.parse(rawResponse);
 
+    // if (variantId) {
+    //   // Stripping frontend variant index to find the main MongoDB Document ID
+    //   const coreDatabaseId = variantId.split("_variant_")[0];
+
+    //   await Thumbnail.findByIdAndUpdate(
+    //     coreDatabaseId,
+    //     {
+    //       ctaScore: parsedData.overall,               // Saving score to DB
+    //       feedbackLogs: parsedData.recommendations,  // Saving feedback tips to DB
+    //       imageUrl: imageUrl                          // Matching your exact schema field name
+    //     },
+    //     { new: true }
+    //   );
+    // }
+
     // 5. 💾 SAVE TO MONGO DATABASE (Updating using correct schema fields)
     if (variantId) {
-      // Stripping frontend variant index to find the main MongoDB Document ID
-      const coreDatabaseId = variantId.split("_variant_")[0];
-      
+      // Clean up the conditional lookup to safely capture any ID variant structure
+      const coreDatabaseId = variantId.includes("_variant_")
+        ? variantId.split("_variant_")[0]
+        : variantId;
+
       await Thumbnail.findByIdAndUpdate(
         coreDatabaseId,
         {
-          ctaScore: parsedData.overall,               // Saving score to DB
-          feedbackLogs: parsedData.recommendations,  // Saving feedback tips to DB
-          imageUrl: imageUrl                          // Matching your exact schema field name
+          ctaScore: parsedData.overall,
+          feedbackLogs: parsedData.recommendations,
+          imageUrl: imageUrl
         },
         { new: true }
       );
     }
 
     // 6. Return response safely back to React
-    return res.status(200).json({ 
-      success: true, 
+    return res.status(200).json({
+      success: true,
       overall: parsedData.overall,
-      data: parsedData 
+      data: parsedData
     });
-    
+
   } catch (error) {
     console.error("CTA Pipeline Exception Error:", error);
     return res.status(500).json({ success: false, error: error.message });
