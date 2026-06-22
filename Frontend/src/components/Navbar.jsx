@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdMenu, MdClose } from "react-icons/md"; // 🌟 Added Hamburger Icons
 import { IoIosLogOut } from "react-icons/io";
 import { RiAiGenerate } from "react-icons/ri";
-import { useNavigate, NavLink } from "react-router-dom"; // 🌟 Imported NavLink here
+import { IoIosHome } from "react-icons/io"; // 🌟 Added Home Icon for mobile
+import { useNavigate, NavLink } from "react-router-dom";
 import logoImg from "../assets/logo1.png";
 
 export default function Navbar() {
@@ -11,6 +12,7 @@ export default function Navbar() {
     email: "not-logged-in@clixora.ai",
   });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 🌟 State for mobile hamburger drawer
   const navigate = useNavigate();
 
   // Fetch user information upon mount
@@ -46,27 +48,37 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+    <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
       
-      {/* BRAND LOGO HEADER */}
-      <div
-        className="flex items-center gap-2 font-black text-xl text-pink-600 tracking-tight cursor-pointer"
-        style={{ fontFamily: "'Syne', sans-serif" }}
-        onClick={() => navigate("/")}
-      >
-        <span className="rounded-lg flex items-center justify-center">
-          <img src={logoImg} className="h-8 w-auto object-contain" alt="Logo" />
-        </span>
-        CLIXORA
+      {/* LEFT SIDES: HAMBURGER (MOBILE ONLY) & LOGO */}
+      <div className="flex items-center gap-3">
+        {/* 🌟 Hamburger Button (Visible only on mobile screen sizes) */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="sm:hidden text-slate-600 hover:text-slate-900 focus:outline-none cursor-pointer p-1 rounded-lg hover:bg-slate-100 transition"
+        >
+          {isMobileMenuOpen ? <MdClose size={24} /> : <MdMenu size={24} />}
+        </button>
+
+        {/* BRAND LOGO HEADER */}
+        <div
+          className="flex items-center gap-2 font-black text-xl text-pink-600 tracking-tight cursor-pointer"
+          style={{ fontFamily: "'Syne', sans-serif" }}
+          onClick={() => navigate("/")}
+        >
+          <span className="rounded-lg flex items-center justify-center">
+            <img src={logoImg} className="h-8 w-auto object-contain" alt="Logo" />
+          </span>
+          CLIXORA
+        </div>
       </div>
       
-      {/* ── DYNAMIC TRACKING NAVIGATION LINKS ── */}
+      {/* ── DESKTOP LINKS (Hidden on Mobile) ── */}
       <div className="hidden sm:flex gap-6 font-semibold text-sm">
-        
         {/* HOME LINK */}
         <NavLink 
           to="/" 
-          end // Ensures exact root route mapping configuration
+          end 
           className={({ isActive }) => 
             `pb-1 transition duration-200 ${
               isActive ? "text-pink-600 border-b-2 border-pink-600" : "text-slate-600 hover:text-slate-900"
@@ -168,6 +180,56 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* 🌟 ── MOBILE DROPDOWN MENU DRAWER ── */}
+      {isMobileMenuOpen && (
+        <>
+          {/* Background Overlay to close drawer */}
+          <div className="fixed inset-0 top-[69px] bg-slate-900/10 backdrop-blur-xs z-40 sm:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+          
+          <div className="absolute top-full left-0 w-full bg-white border-b border-slate-200 px-6 py-4 flex flex-col gap-2 z-50 sm:hidden shadow-xl animate-in fade-in slide-in-from-top-4 duration-200">
+            <NavLink
+              to="/"
+              end
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                  isActive ? "bg-pink-50 text-pink-600" : "text-slate-600 hover:bg-slate-50"
+                }`
+              }
+            >
+              <IoIosHome size={18} />
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/dashboard"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                  isActive ? "bg-pink-50 text-pink-600" : "text-slate-600 hover:bg-slate-50"
+                }`
+              }
+            >
+              <MdDashboard size={18} />
+              Dashboard
+            </NavLink>
+
+            <NavLink
+              to="/generate"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                  isActive ? "bg-pink-50 text-pink-600" : "text-slate-600 hover:bg-slate-50"
+                }`
+              }
+            >
+              <RiAiGenerate size={18} />
+              Generator Matrix
+            </NavLink>
+          </div>
+        </>
+      )}
     </nav>
   );
 }

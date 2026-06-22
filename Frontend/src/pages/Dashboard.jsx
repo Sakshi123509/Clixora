@@ -11,18 +11,16 @@ import {
 } from "react-icons/md";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { RiLoader4Line } from "react-icons/ri";
-import axios from "axios";
 import Navbar from "../components/Navbar";
 import logoImg from "../assets/logo1.png";
-// Dashboard.jsx ke useEffect ke andar fetch logic ko badlein:
-import api from "../api/apiInstance.js"; // Standard Instance load karein
+import api from "../api/apiInstance.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 🌟 DERIVED METRICS FOR LIVE TELEMETRY PANELS (Auto updates when projects array changes)
+  // 🌟 DERIVED METRICS FOR LIVE TELEMETRY PANELS
   const totalCloudAssets = projects.length;
 
   const totalcta = projects.reduce(
@@ -49,7 +47,6 @@ export default function Dashboard() {
     const fetchProjects = async () => {
       try {
         setIsLoading(true);
-        // Correct API Base Path Mapping targeting Refactored Route
         const { data } = await api.get("/api/dashboard/saved-projects");
 
         if (data.success) {
@@ -72,7 +69,6 @@ export default function Dashboard() {
       return;
 
     try {
-      const token = localStorage.getItem("token");
       const { data } = await api.delete(`/api/dashboard/project/${id}`);
       if (data.success) {
         setProjects((prev) => prev.filter((p) => p._id !== id));
@@ -88,7 +84,7 @@ export default function Dashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* DASHBOARD HERO HEADER */}
-        <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-6">
+        <header className="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-pink-600 uppercase mb-1">
               <MdDashboard className="animate-pulse" />
@@ -103,7 +99,7 @@ export default function Dashboard() {
           </div>
           <button
             onClick={() => navigate("/generate")}
-            className="group flex items-center gap-2 bg-pink-500 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-pink-500/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+            className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-pink-500 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-pink-500/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
           >
             <HiOutlineSparkles className="group-hover:rotate-12 transition-transform" />
             <span>Generate New Matrix</span>
@@ -156,7 +152,6 @@ export default function Dashboard() {
               Peak Performance Index
             </p>
             <h3 className="text-3xl font-black text-slate-800 tracking-tight">
-              {/* 🌟 FIXED: Direct binding to the real calculated live variable */}
               {isLoading ? "---" : `${peakPerformanceIndex}/100`}
             </h3>
             <p className="text-xs text-emerald-600 font-medium mt-2 flex items-center gap-1">
@@ -206,10 +201,11 @@ export default function Dashboard() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            /* 🌟 FIXED responsive columns mapping grid for cards layout safety */
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project) => {
                 const displayScore =
-                  project.ctaScore !== null ? project.ctaScore : 75; // Safe default value logic
+                  project.ctaScore !== null ? project.ctaScore : 75;
                 return (
                   <div
                     key={project._id}
@@ -271,6 +267,7 @@ export default function Dashboard() {
                         </p>
                       </div>
 
+                      {/* 🌟 FIXED: Kept grid-cols-2 but wrapped contents layout with safe padding for extra compressed devices */}
                       <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
                         <button
                           onClick={() =>
@@ -283,17 +280,17 @@ export default function Dashboard() {
                               },
                             })
                           }
-                          className="flex cursor-pointer items-center justify-center gap-1 py-2 px-3 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-xl text-xs transition"
+                          className="flex cursor-pointer items-center justify-center gap-1 py-2 px-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-xl text-[11px] transition whitespace-nowrap"
                         >
-                          <MdInsights size={14} className="text-purple-500" />
+                          <MdInsights size={13} className="text-purple-500 flex-shrink-0" />
                           <span>Audit Data</span>
                         </button>
 
                         <button
                           onClick={(e) => handleDeleteProject(project._id, e)}
-                          className="flex cursor-pointer items-center justify-center gap-1 py-2 px-3 bg-rose-50/70 hover:bg-rose-100 text-rose-600 border border-rose-100 font-bold rounded-xl text-xs transition"
+                          className="flex cursor-pointer items-center justify-center gap-1 py-2 px-1.5 bg-rose-50/70 hover:bg-rose-100 text-rose-600 border border-rose-100 font-bold rounded-xl text-[11px] transition whitespace-nowrap"
                         >
-                          <MdDeleteOutline size={14} />
+                          <MdDeleteOutline size={13} className="flex-shrink-0" />
                           <span>Purge</span>
                         </button>
                       </div>

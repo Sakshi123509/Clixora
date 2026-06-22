@@ -5,11 +5,13 @@ const Footer = () => {
     <div>
       {/* ── 🌐 MODERN RESPONSIVE FOOTER SECTION ── */}
       <footer className="bg-white border-t border-slate-200 w-full relative z-20 font-outfit mt-auto">
-        <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        {/* DESKTOP MATRIX: Mobile standard par hidden (`hidden md:grid`) taaki space bache */}
+        <div className="hidden md:grid max-w-6xl mx-auto px-6 py-12 grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Logo & Manifesto column */}
           <div className="md:col-span-5 space-y-3">
             <div
-              className="font-black text-xl text-pink-500  tracking-tight"
+              className="font-black text-xl text-pink-500 tracking-tight"
               style={{ fontFamily: "'Syne', sans-serif" }}
             >
               CLIXORA{" "}
@@ -36,18 +38,12 @@ const Footer = () => {
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/dashboard"
-                    className="hover:text-pink-600 transition"
-                  >
+                  <a href="/dashboard" className="hover:text-pink-600 transition">
                     Dashboard
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/generate"
-                    className="hover:text-pink-600 transition"
-                  >
+                  <a href="/generate" className="hover:text-pink-600 transition">
                     Generator
                   </a>
                 </li>
@@ -89,15 +85,14 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Lower System Metadata Bar */}
-        <div className="bg-slate-50/60 border-t border-slate-200/60 py-4 px-6">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] font-medium text-slate-400">
+        {/* LOWER METADATA BAR: Extremely compact on mobile, standard on desktop */}
+        <div className="bg-slate-50/60 border-t border-slate-200/60 py-2.5 md:py-4 px-4 md:px-6">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5 text-[10px] md:text-[11px] font-medium text-slate-400 text-center sm:text-left">
             <div>
-              &copy; {new Date().getFullYear()} Clixora Dev Nodes. All
-              architectural assets secure.
+              &copy; {new Date().getFullYear()} Clixora Dev Nodes.
             </div>
-            <div className="font-mono text-[10px] tracking-tight">
-              v1.2.0_stable // Cloudflare Layered Architecture
+            <div className="font-mono text-[9px] md:text-[10px] tracking-tight text-slate-400/80">
+              v1.2.0_stable // Cloudflare Layered
             </div>
           </div>
         </div>

@@ -2,18 +2,19 @@ import React, { useState } from "react";
 import logoImg from "../assets/logo1.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { motion, AnimatePresence } from "motion/react"; // <-- Added AnimatePresence for smooth tab switching
+// 🌟 FIXED: Standard package entry point setup
+import { motion, AnimatePresence } from "framer-motion"; 
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState(0);
 
-  // Animation Variants (Reusable settings)
+  // Animation Variants (Optimized cubic curves mapping)
   const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 25 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "outCubic" },
+      transition: { duration: 0.5, ease: [0.215, 0.61, 0.355, 1] }, // Fixed outCubic string error
     },
   };
 
@@ -21,16 +22,7 @@ export default function HomePage() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.15 }, // Elements appear one after another
-    },
-  };
-
-  const textVariant = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 100, damping: 20 },
+      transition: { staggerChildren: 0.12 },
     },
   };
 
@@ -96,7 +88,7 @@ export default function HomePage() {
       stepNum: "01",
       icon: "⚙️",
       method: "STEP ONE",
-      title: "Input Generation Parameters",
+      title: "Input Parameters",
       mainPoints: [
         "Provide Thumbnail title & choice of niche",
         "Select target visual style presets",
@@ -114,7 +106,7 @@ export default function HomePage() {
       stepNum: "02",
       icon: "⚡",
       method: "STEP TWO",
-      title: "Generate & Select Variants",
+      title: "Select Variants",
       mainPoints: [
         "Click the 'Generate' trigger button",
         "Cloudflare AI renders 4 unique layouts",
@@ -132,13 +124,13 @@ export default function HomePage() {
       stepNum: "03",
       icon: "🔮",
       method: "STEP THREE",
-      title: "Score, Optimize & Route",
+      title: "Score & Optimize",
       mainPoints: [
         "Predictive Gemini AI CTA scoring",
         "Actionable transformation feedback",
         "Dual-destination workflow routing",
       ],
-      desc: "Receive an immediate data-backed conversion score alongside target improvement tips. From here, finalize your build instantly with the quick Download button, or navigate smoothly into the Studio Canvas for granular asset layout adjustments.",
+      desc: "Receive an immediate data-backed conversion score alongside target improvement tips. From here, finalize your build instantly with the quick Download button, or navigate smoothly into the Studio Canvas.",
       features: [
         "Instant PNG Downloading",
         "Deep Studio Canvas Link",
@@ -148,12 +140,7 @@ export default function HomePage() {
     },
   ];
 
-  const visualStates = {
-    initialState: { opacity: 0, y: 50 }, // Starts invisible and 50px lower
-    animateState: { opacity: 1, y: 0 }, // Ends fully visible and in its correct spot
-  };
   return (
-
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans relative overflow-hidden flex flex-col justify-between">
       <style>{`
         @keyframes border-draw {
@@ -170,168 +157,167 @@ export default function HomePage() {
 
       {/* Background Image Layer */}
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none -z-10 opacity-15"
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none -z-10 opacity-[0.08] sm:opacity-15"
         style={{ backgroundImage: `url(${logoImg})` }}
       />
-      {/* Orbs Background */}
+      
+      {/* Orbs Background - Scaled for smaller mobile frames */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute w-[650px] h-[650px] -top-[250px] -left-[150px] rounded-full bg-pink-500/10 blur-[40px]" />
-        <div className="absolute w-[550px] h-[550px] -bottom-[150px] -right-[100px] rounded-full bg-indigo-500/10 blur-[50px]" />
+        <div className="absolute w-[320px] sm:w-[650px] h-[320px] sm:h-[650px] -top-[100px] sm:-top-[250px] -left-[80px] sm:-left-[150px] rounded-full bg-pink-500/10 blur-[30px] sm:blur-[40px]" />
+        <div className="absolute w-[300px] sm:w-[550px] h-[300px] sm:h-[550px] -bottom-[80px] sm:-bottom-[150px] -right-[50px] sm:-right-[100px] rounded-full bg-indigo-500/10 blur-[35px] sm:blur-[50px]" />
       </div>
+
       <div className="relative z-10 font-outfit flex-grow">
         <Navbar logoImg={logoImg} />
 
-        {/* ── HERO SECTION (Fades in on load) ── */}
+        {/* ── HERO SECTION ── */}
         <motion.header
           initial="hidden"
           animate="visible"
           variants={fadeInUp}
-          className="max-w-5xl mx-auto py-20 md:py-28 px-6 min-h-[80vh] flex flex-col justify-center items-center text-center relative z-10"
+          className="max-w-5xl mx-auto py-12 md:py-24 px-4 sm:px-6 min-h-[75vh] flex flex-col justify-center items-center text-center relative z-10"
         >
-          <div
-            className="absolute inset-0 max-w-4xl mx-auto bg-contain bg-center bg-no-repeat pointer-events-none -z-10 opacity-10"
-            style={{ backgroundImage: `url(${logoImg})` }}
-          />
-
-          <div>
-            <span className="bg-gradient-to-r from-pink-500/10 to-indigo-500/10 text-slate-900 text-xs font-mono font-bold tracking-widest px-4 py-2 rounded-full inline-flex items-center gap-2 mb-6 border border-pink-200/60 shadow-sm backdrop-blur-md uppercase">
-              <span className="flex h-2 w-2 relative">
+          <div className="w-full">
+            <span className="bg-gradient-to-r from-pink-500/10 to-indigo-500/10 text-slate-900 text-[11px] sm:text-xs font-mono font-bold tracking-widest px-3 sm:px-4 py-1.5 sm:py-2 rounded-full inline-flex items-center gap-2 mb-5 sm:mb-6 border border-pink-200/60 shadow-sm backdrop-blur-md uppercase max-w-[90vw] sm:max-w-none">
+              <span className="flex h-2 w-2 relative flex-shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
               </span>
-              ✨ Powered by Cloudflare AI + Gemini Intelligence
+              <span className="truncate">✨ Powered by Cloudflare AI + Gemini</span>
             </span>
           </div>
 
           <h1
-            className="text-slate-900 font-black tracking-tight leading-[1.05] max-w-4xl"
+            className="text-slate-900 font-black tracking-tight leading-[1.1] max-w-4xl px-2"
             style={{
               fontFamily: "'Syne', sans-serif",
-              fontSize: "clamp(2.5rem, 5.5vw, 4.5rem)",
+              fontSize: "clamp(1.85rem, 5.2vw, 4.25rem)",
             }}
           >
             Create High CTR Thumbnails <br className="hidden sm:inline" />
             <span className="text-pink-600">That Drive Organic Reach</span>
           </h1>
 
-          <p className="mt-6 text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium tracking-tight">
+          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium tracking-tight px-4">
             Generate high-converting compositions instantly using Cloudflare AI,
             run data-backed CTR prediction models via Gemini, and tweak text
             layouts live inside our browser studio canvas.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full px-4 sm:px-0">
             <motion.a
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               href="/generate"
-              className="w-full sm:w-auto text-center bg-pink-600 hover:bg-pink-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-pink-600/20 transition-all tracking-tight text-sm md:text-base"
+              className="w-full sm:w-auto text-center bg-pink-600 hover:bg-pink-700 text-white font-bold px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-pink-600/10 transition-all tracking-tight text-sm"
             >
               🚀 Launch Generator Matrix
             </motion.a>
             <motion.a
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               href="/dashboard"
-              className="w-full sm:w-auto text-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-8 py-4 rounded-xl transition shadow-sm tracking-tight text-sm md:text-base"
+              className="w-full sm:w-auto text-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl transition shadow-sm tracking-tight text-sm"
             >
               View Active Dashboard
             </motion.a>
           </div>
         </motion.header>
 
-        {/* ── CORE CAPABILITIES SECTION (Scroll-triggered Animation) ── */}
-        <section className="text-slate-800 py-20 px-6 relative overflow-hidden border-y border-slate-200/50">
-          <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        {/* ── CORE CAPABILITIES SECTION ── */}
+        <section className="text-slate-800 py-14 sm:py-20 px-4 sm:px-6 relative overflow-hidden border-y border-slate-200/50">
+          <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
-          <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 items-center relative z-10">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-6 sm:gap-8 items-start relative z-10">
+            
             {/* Left side tabs */}
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, margin: "-50px" }}
               variants={staggerContainer}
-              className="md:col-span-5 space-y-4 order-2 md:order-1"
+              className="lg:col-span-5 w-full space-y-3 sm:space-y-4 order-2 lg:order-1"
             >
-              <div className="mb-6">
-                <span className="text-xs font-bold font-mono tracking-widest text-pink-600 uppercase">
+              <div className="mb-4 sm:mb-6 text-center lg:text-left">
+                <span className="text-[10px] sm:text-xs font-bold font-mono tracking-widest text-pink-600 uppercase">
                   Core Engine Capabilities
                 </span>
                 <h2
-                  className="text-2xl md:text-3xl font-extrabold tracking-tight mt-1 text-slate-900"
+                  className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight mt-1 text-slate-900"
                   style={{ fontFamily: "'Syne', sans-serif" }}
                 >
                   Intelligent Architecture
                 </h2>
               </div>
 
-              {coreFeatures.map((item, index) => (
-                <motion.button
-                  variants={fadeInUp}
-                  key={index}
-                  onClick={() => setActiveTab(index)}
-                  className={`w-full cursor-pointer text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${
-                    activeTab === index
-                      ? "bg-white border-pink-500 shadow-md shadow-pink-500/5"
-                      : "bg-white/40 border-slate-200/60 hover:border-slate-300 hover:bg-white/80"
-                  }`}
-                >
-                  <span
-                    className={`text-xl p-2.5 rounded-xl ${activeTab === index ? "bg-pink-50 text-pink-600" : "bg-slate-100 text-slate-500"}`}
+              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2 sm:gap-3 lg:gap-4">
+                {coreFeatures.map((item, index) => (
+                  <motion.button
+                    variants={fadeInUp}
+                    key={index}
+                    onClick={() => setActiveTab(index)}
+                    className={`w-full cursor-pointer text-left p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 flex flex-row lg:items-center gap-3 sm:gap-4 ${
+                      activeTab === index
+                        ? "bg-white border-pink-500 shadow-md shadow-pink-500/5"
+                        : "bg-white/50 border-slate-200/60 hover:border-slate-300 hover:bg-white/90"
+                    }`}
                   >
-                    {item.icon}
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-sm tracking-wide text-slate-900">
-                      {item.title}
-                    </h4>
-                    <span className="text-[10px] text-slate-500 font-mono">
-                      {item.badge}
+                    <span
+                      className={`text-lg p-2 rounded-lg flex-shrink-0 flex items-center justify-center h-10 w-10 ${activeTab === index ? "bg-pink-50 text-pink-600" : "bg-slate-100 text-slate-500"}`}
+                    >
+                      {item.icon}
                     </span>
-                  </div>
-                </motion.button>
-              ))}
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-bold text-xs sm:text-sm tracking-wide text-slate-900 truncate">
+                        {item.title}
+                      </h4>
+                      <span className="text-[9px] sm:text-[10px] text-slate-500 font-mono block truncate">
+                        {item.badge}
+                      </span>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
             </motion.div>
 
-            {/* Right Side Content Box (Smooth content swap using AnimatePresence) */}
-            <div className="md:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-xl relative min-h-[340px] flex flex-col justify-between backdrop-blur-sm order-1 md:order-2">
+            {/* Right Side Content Box */}
+            <div className="lg:col-span-7 w-full bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl relative min-h-[280px] sm:min-h-[340px] flex flex-col justify-between backdrop-blur-sm order-1 lg:order-2">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
-                  initial={{ opacity: 0, x: 15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -15 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
                 >
-                  <span className="px-3 py-1 text-[10px] font-mono font-bold bg-pink-50 text-pink-600 rounded-md border border-pink-100 inline-block mb-4">
+                  <span className="px-2.5 py-0.5 text-[9px] font-mono font-bold bg-pink-50 text-pink-600 rounded border border-pink-100 inline-block mb-3">
                     {coreFeatures[activeTab].badge}
                   </span>
                   <h3
-                    className="text-xl md:text-2xl font-bold text-slate-900 mb-2"
+                    className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-1.5"
                     style={{ fontFamily: "'Syne', sans-serif" }}
                   >
                     {coreFeatures[activeTab].title}
                   </h3>
-                  <p className="text-pink-600 text-sm font-semibold tracking-wide mb-3">
+                  <p className="text-pink-600 text-xs sm:text-sm font-semibold tracking-wide mb-2.5">
                     "{coreFeatures[activeTab].tagline}"
                   </p>
-                  <p className="text-slate-600 text-sm leading-relaxed max-w-xl">
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed max-w-xl">
                     {coreFeatures[activeTab].desc}
                   </p>
                 </motion.div>
               </AnimatePresence>
 
-              {/* Progress bar and stat */}
-              <div className="mt-6 pt-6 border-t border-slate-100 flex items-center gap-6">
-                <div>
-                  <div className="text-3xl font-black font-mono text-slate-900 tracking-tight">
+              <div className="mt-5 pt-5 border-t border-slate-100 flex items-center gap-4 sm:gap-6">
+                <div className="flex-shrink-0">
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 tracking-tight">
                     {coreFeatures[activeTab].stat}
                   </div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-1">
+                  <div className="text-[9px] uppercase font-bold tracking-wider text-slate-400 mt-0.5">
                     {coreFeatures[activeTab].statLabel}
                   </div>
                 </div>
-                <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="flex-1 h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-pink-500 rounded-full"
                     initial={{ width: 0 }}
@@ -343,19 +329,20 @@ export default function HomePage() {
                             ? "75%"
                             : "100%",
                     }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
                 </div>
               </div>
             </div>
+
           </div>
         </section>
 
-        {/* ── HOW CLIXORA WORKS SECTION (Staggered load on scroll) ── */}
-        <section className="max-w-7xl mx-auto px-6 py-20 text-center">
-          <div className="mb-16">
+        {/* ── HOW CLIXORA WORKS SECTION ── */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+          <div className="mb-10 sm:mb-14">
             <h2
-              className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-3"
               style={{
                 fontFamily: "'Syne', sans-serif",
                 letterSpacing: "-0.01em",
@@ -363,7 +350,7 @@ export default function HomePage() {
             >
               HOW TO ACTIVATE <span className="text-pink-600">CLIXORA</span>
             </h2>
-            <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base font-medium">
+            <p className="text-slate-500 max-w-2xl mx-auto text-xs sm:text-sm md:text-base font-medium px-2">
               Our optimized three-step workflow streamlines resource-heavy
               graphic design into a unified, lightning-fast rendering operation.
             </p>
@@ -372,76 +359,76 @@ export default function HomePage() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={staggerContainer}
-            className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 items-stretch"
+            className="grid lg:grid-cols-3 md:grid-cols-2 gap-5 sm:gap-8 items-stretch"
           >
             {howItWorksSteps.map((step, idx) => (
               <motion.div
                 variants={fadeInUp}
-                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 key={idx}
-                className="backdrop-blur-md border-2 border-slate-100/80 rounded-2xl p-6 md:p-8 text-left relative overflow-hidden group flex flex-col justify-between min-h-[550px] animate-border-glow bg-white shadow-sm hover:shadow-2xl"
+                className="backdrop-blur-md border-2 border-slate-100/80 rounded-2xl p-5 sm:p-8 text-left relative overflow-hidden group flex flex-col justify-between min-h-[460px] sm:min-h-[520px] animate-border-glow bg-white shadow-sm hover:shadow-xl transition-all"
                 style={{
                   backgroundImage: step.bgImage
-                    ? `linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.98)), url(${step.bgImage})`
+                    ? `linear-gradient(to bottom, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.98)), url(${step.bgImage})`
                     : "none",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
               >
-                {/* Tech Corners */}
-                <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
-                <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
-                <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
-                <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-slate-300 group-hover:border-pink-500 transition-colors duration-300" />
+                {/* Tech Corners Component */}
+                <div className="absolute top-3 left-3 w-3 h-3 border-t-2 border-l-2 border-slate-200 group-hover:border-pink-500 transition-colors duration-300" />
+                <div className="absolute top-3 right-3 w-3 h-3 border-t-2 border-r-2 border-slate-200 group-hover:border-pink-500 transition-colors duration-300" />
+                <div className="absolute bottom-3 left-3 w-3 h-3 border-b-2 border-l-2 border-slate-200 group-hover:border-pink-500 transition-colors duration-300" />
+                <div className="absolute bottom-3 right-3 w-3 h-3 border-b-2 border-r-2 border-slate-200 group-hover:border-pink-500 transition-colors duration-300" />
 
                 <div>
-                  <div className="flex justify-between items-start mb-6">
+                  <div className="flex justify-between items-start mb-4 sm:mb-6">
                     <div>
-                      <span className="text-[10px] font-bold tracking-widest text-indigo-600/80 block mb-1 uppercase font-mono">
+                      <span className="text-[9px] font-bold tracking-widest text-indigo-600/80 block mb-1 uppercase font-mono">
                         {step.method}
                       </span>
-                      <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-lg border border-slate-200/60 group-hover:bg-pink-50 group-hover:border-pink-200 transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-base border border-slate-200/60 group-hover:bg-pink-50 group-hover:border-pink-200 transition-all duration-300">
                         {step.icon}
                       </div>
                     </div>
-                    <span className="text-6xl font-black text-slate-100 select-none font-mono group-hover:text-pink-100/60 transition-colors duration-300 tracking-tighter">
+                    <span className="text-4xl sm:text-6xl font-black text-slate-100/80 select-none font-mono group-hover:text-pink-100/50 transition-colors duration-300 tracking-tighter">
                       {step.stepNum}
                     </span>
                   </div>
 
                   <h3
-                    className="text-xl md:text-2xl font-bold tracking-tight text-slate-900 mb-6 group-hover:text-pink-600 transition-colors duration-200"
+                    className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-slate-900 mb-4 group-hover:text-pink-600 transition-colors duration-200"
                     style={{ fontFamily: "'Syne', sans-serif" }}
                   >
                     {step.title}
                   </h3>
 
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-2.5 mb-5">
                     {step.mainPoints.map((point, pIdx) => (
-                      <li key={pIdx} className="flex items-start gap-3">
-                        <span className="w-5 h-5 rounded-full border border-pink-500/60 flex items-center justify-center text-[10px] font-bold text-pink-600 mt-0.5 flex-shrink-0 bg-pink-50/40">
+                      <li key={pIdx} className="flex items-start gap-2.5">
+                        <span className="w-4 h-4 rounded-full border border-pink-500/50 flex items-center justify-center text-[9px] font-bold text-pink-600 mt-0.5 flex-shrink-0 bg-pink-50/40">
                           {pIdx + 1}
                         </span>
-                        <span className="text-sm font-semibold text-slate-800 tracking-tight">
+                        <span className="text-xs sm:text-sm font-semibold text-slate-800 tracking-tight leading-snug">
                           {point}
                         </span>
                       </li>
                     ))}
                   </ul>
 
-                  <p className="text-slate-600 text-xs leading-relaxed font-medium mb-6 border-t border-slate-200/60 pt-4">
+                  <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed font-medium mb-5 border-t border-slate-100 pt-3.5">
                     {step.desc}
                   </p>
                 </div>
 
-                <div>
-                  <div className="flex flex-wrap gap-2">
+                <div className="pt-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {step.features.map((feat, fIdx) => (
                       <span
                         key={fIdx}
-                        className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md border border-slate-200/50 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all duration-300"
+                        className="text-[9px] font-mono px-2 py-0.5 bg-slate-50 text-slate-500 rounded border border-slate-200/40 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all duration-300"
                       >
                         • {feat}
                       </span>
@@ -453,18 +440,18 @@ export default function HomePage() {
           </motion.div>
         </section>
 
-        {/* ── DASHBOARD PROJECTS SECTION (Scroll animation) ── */}
-        <main className="max-w-6xl mx-auto px-6 pb-24">
-          <div className="flex justify-between items-center mb-8">
+        {/* ── DASHBOARD PROJECTS SECTION ── */}
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+          <div className="flex justify-between items-center mb-6 sm:mb-8">
             <h2
-              className="text-xl md:text-2xl font-bold tracking-tight text-slate-900"
+              className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-slate-900"
               style={{ fontFamily: "'Syne', sans-serif" }}
             >
               Your Recent Drafts
             </h2>
             <a
               href="/dashboard"
-              className="text-pink-600 hover:text-pink-700 font-bold text-sm transition"
+              className="text-pink-600 hover:text-pink-700 font-bold text-xs sm:text-sm transition"
             >
               View all projects &rarr;
             </a>
@@ -473,48 +460,50 @@ export default function HomePage() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-40px" }}
             variants={staggerContainer}
-            className="grid sm:grid-cols-2 md:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"
           >
             {recentDrafts.map((draft, idx) => (
               <motion.div
                 variants={fadeInUp}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 key={idx}
-                className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl transition duration-300 group cursor-pointer relative overflow-hidden"
+                className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-sm hover:shadow-xl transition-shadow duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between"
               >
-                <div
-                  className={`w-full aspect-video bg-gradient-to-br ${draft.bgGradient} rounded-xl mb-4 flex items-center justify-center text-4xl shadow-inner overflow-hidden`}
-                >
-                  <img
-                    src={draft.imgurl}
-                    alt={draft.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      e.target.src =
-                        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80";
-                    }}
-                  />
+                <div>
+                  <div
+                    className={`w-full aspect-video bg-gradient-to-br ${draft.bgGradient} rounded-xl mb-3.5 flex items-center justify-center text-3xl shadow-inner overflow-hidden relative`}
+                  >
+                    <img
+                      src={draft.imgurl}
+                      alt={draft.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.target.src =
+                          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80";
+                      }}
+                    />
+                  </div>
+
+                  <div className="absolute top-0 left-0 w-1 h-full bg-pink-500 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-300" />
+
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-pink-600 block mb-0.5 font-mono">
+                    {draft.niche}
+                  </span>
+
+                  <h3 className="font-bold text-xs sm:text-sm md:text-base text-slate-900 group-hover:text-pink-600 transition line-clamp-1 mb-0.5">
+                    {draft.title}
+                  </h3>
+                  <p className="text-[10px] sm:text-xs text-slate-400 mb-3.5">{draft.time}</p>
                 </div>
 
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-pink-500 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-300"></div>
-
-                <span className="text-[10px] font-bold uppercase tracking-wider text-pink-600 block mb-1 font-mono">
-                  {draft.niche}
-                </span>
-
-                <h3 className="font-bold text-sm md:text-base text-slate-900 group-hover:text-pink-600 transition line-clamp-1 mb-1">
-                  {draft.title}
-                </h3>
-                <p className="text-xs text-slate-400 mb-4">{draft.time}</p>
-
-                <div className="flex justify-between items-center pt-3 border-t border-slate-100">
-                  <span className="text-[10px] text-slate-400 font-bold tracking-wide uppercase font-mono">
+                <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 mt-auto">
+                  <span className="text-[9px] text-slate-400 font-bold tracking-wide uppercase font-mono">
                     Predictive CTR
                   </span>
                   <span
-                    className={`text-xs font-bold px-2.5 py-1 rounded-lg ${draft.score >= 85 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
+                    className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1 rounded-md ${draft.score >= 85 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
                   >
                     {draft.score}% Score
                   </span>
@@ -523,7 +512,7 @@ export default function HomePage() {
             ))}
           </motion.div>
         </main>
-      </div>
+</div>
     </div>
   );
 }
