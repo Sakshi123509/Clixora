@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   MdArrowBack,
   MdTextFields,
-  MdColorLens,
   MdFormatSize,
   MdDownload,
   MdLayers,
@@ -15,7 +13,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import api from "../api/apiInstance.js";
 import Navbar from "../components/Navbar.jsx";
 import logoImg from "../assets/logo1.png";
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"; // 🌟 Imported motion and AnimatePresence
 
 const AVAILABLE_FONTS = [
   { name: "Impact Standard", value: "Impact, Charcoal, sans-serif" },
@@ -29,6 +27,17 @@ const AVAILABLE_FONTS = [
   { name: "Poppins (Clean Modern)", value: "'Poppins', sans-serif" },
   { name: "Teko (Gaming Intense)", value: "'Teko', sans-serif" },
 ];
+
+// 🌟 Motion configurations
+const sidebarPanelVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+};
+
+const subElementVariants = {
+  hidden: { opacity: 0, x: -15 },
+  visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 120 } }
+};
 
 export default function Canvas() {
   const location = useLocation();
@@ -245,15 +254,18 @@ export default function Canvas() {
 
   return (
     <div className="h-screen w-full flex flex-col bg-slate-100 text-slate-800 font-sans antialiased overflow-hidden">
-      {/* 🧭 TOP NAVBAR */}
       <Navbar logoImg={logoImg} />
 
-      {/* Main Workspace Split Wrapper */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden pb-[60px] md:pb-0">
         
-        {/* 🟢 MONITOR CANVAS WORKSPACE ELEMENT (Mobile: Top / Order-1) */}
+        {/* 🟢 MONITOR CANVAS WORKSPACE ELEMENT */}
         <main className="order-1 md:order-2 flex-1 h-[40vh] md:h-full flex flex-col items-center justify-center p-3 md:p-6 bg-slate-900/5 border-b md:border-b-0 border-slate-200">
-          <div className="w-full max-w-4xl bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", damping: 20 }}
+            className="w-full max-w-4xl bg-white p-2 rounded-2xl border border-slate-200 shadow-sm"
+          >
             <div className="flex items-center justify-between mb-1.5 px-1 text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-wider">
               <span>🔴 Viewport [1280x720]</span>
               {selectedLayerId && <span className="text-pink-500 animate-pulse">⚡ Drag Active</span>}
@@ -271,20 +283,27 @@ export default function Canvas() {
                 className="w-full h-full object-contain"
               />
             </div>
-          </div>
+          </motion.div>
         </main>
 
-        {/* 🔵 COMPONENTS SIDEBAR (Mobile: Bottom / Order-2) */}
+        {/* 🔵 COMPONENTS SIDEBAR */}
         <aside className="order-2 md:order-1 w-full md:w-80 bg-white md:border-r border-slate-200 flex flex-col justify-between p-4 shrink-0 h-[60vh] md:h-full overflow-y-auto z-20 shadow-sm">
-          <div className="space-y-4">
+          <motion.div 
+            variants={sidebarPanelVariants} 
+            initial="hidden" 
+            animate="visible" 
+            className="space-y-4"
+          >
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-slate-100 pb-2.5">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1, x: -2 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => navigate("/generate")}
                 className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition cursor-pointer"
               >
                 <MdArrowBack size={16} />
-              </button>
+              </motion.button>
               <div>
                 <h1 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1">
                   <HiOutlineSparkles className="text-pink-500" /> Clixora Engine
@@ -293,7 +312,7 @@ export default function Canvas() {
             </div>
 
             {/* BACKDROP FILTERS */}
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 space-y-2.5">
+            <motion.div variants={subElementVariants} className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 space-y-2.5">
               <h4 className="text-[10px] font-black text-slate-500 tracking-wider uppercase flex items-center gap-1">
                 <MdTune size={12} /> Backdrop Tuning
               </h4>
@@ -325,10 +344,10 @@ export default function Canvas() {
                   className="w-full accent-pink-600 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* TEXT CONTROLS */}
-            <div className="space-y-3">
+            <motion.div variants={subElementVariants} className="space-y-3">
               <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-wide flex items-center gap-1">
                   <MdTextFields size={12} /> Overlay Content
@@ -412,42 +431,56 @@ export default function Canvas() {
                   />
                   <span>Solid Background Box</span>
                 </label>
-                {useBgBox && (
-                  <div className="flex items-center justify-between gap-3 pt-0.5">
-                    <span className="text-[10px] text-slate-400 font-bold">Box Color:</span>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={bgBoxColor}
-                        onChange={(e) => {
-                          setBgBoxColor(e.target.value);
-                          updateSelectedLayerProperties("bgBoxColor", e.target.value);
-                        }}
-                        className="w-7 h-7 border-0 rounded cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                )}
+                
+                <AnimatePresence>
+                  {useBgBox && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="flex items-center justify-between gap-3 pt-0.5 overflow-hidden"
+                    >
+                      <span className="text-[10px] text-slate-400 font-bold">Box Color:</span>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={bgBoxColor}
+                          onChange={(e) => {
+                            setBgBoxColor(e.target.value);
+                            updateSelectedLayerProperties("bgBoxColor", e.target.value);
+                          }}
+                          className="w-7 h-7 border-0 rounded cursor-pointer"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* LAYER ACTIONS */}
               <div className="pt-1">
                 {selectedLayerId === null ? (
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handleAddNewTextLayer}
-                    className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs transition cursor-pointer"
+                    className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs transition cursor-pointer shadow-xs"
                   >
                     + Append Text Block Layer
-                  </button>
+                  </motion.button>
                 ) : (
                   <div className="flex gap-2">
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setSelectedLayerId(null)}
                       className="w-1/2 py-1.5 border border-slate-200 text-slate-600 font-bold rounded-md text-[11px] cursor-pointer"
                     >
                       Deselect
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => {
                         setTextLayers(textLayers.filter((l) => l.id !== selectedLayerId));
                         setSelectedLayerId(null);
@@ -456,58 +489,68 @@ export default function Canvas() {
                       className="w-1/2 py-1.5 bg-rose-50 text-rose-600 font-bold rounded-md text-[11px] border border-rose-200/50 cursor-pointer"
                     >
                       Delete Layer
-                    </button>
+                    </motion.button>
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* STACK LIST */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-100">
+            <motion.div variants={subElementVariants} className="space-y-1.5 pt-2 border-t border-slate-100">
               <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
                 <MdLayers size={11} /> Layer Stack
               </h4>
               <div className="max-h-[90px] overflow-y-auto space-y-1 pr-1">
-                {textLayers.map((l) => (
-                  <div
-                    key={l.id}
-                    onClick={() => {
-                      setSelectedLayerId(l.id);
-                      setInputText(l.text);
-                      setTextColor(l.color);
-                      setTextSize(l.size);
-                      setSelectedFont(l.font || AVAILABLE_FONTS[0].value);
-                      setUseBgBox(l.useBgBox || false);
-                      setBgBoxColor(l.bgBoxColor || "#000000");
-                    }}
-                    className={`p-2 border rounded-md text-[10px] font-bold cursor-pointer transition truncate ${
-                      l.id === selectedLayerId
-                        ? "bg-pink-50 border-pink-300 text-pink-700"
-                        : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                    }`}
-                  >
-                    📝 {l.text}
-                  </div>
-                ))}
+                <AnimatePresence mode="popLayout">
+                  {textLayers.map((l) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      key={l.id}
+                      onClick={() => {
+                        setSelectedLayerId(l.id);
+                        setInputText(l.text);
+                        setTextColor(l.color);
+                        setTextSize(l.size);
+                        setSelectedFont(l.font || AVAILABLE_FONTS[0].value);
+                        setUseBgBox(l.useBgBox || false);
+                        setBgBoxColor(l.bgBoxColor || "#000000");
+                      }}
+                      className={`p-2 border rounded-md text-[10px] font-bold cursor-pointer transition truncate ${
+                        l.id === selectedLayerId
+                          ? "bg-pink-50 border-pink-300 text-pink-700 shadow-xs"
+                          : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                      }`}
+                    >
+                      📝 {l.text}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* DESKTOP SIDEBAR ACTION BUTTONS */}
           <div className="hidden md:flex pt-3 border-t border-slate-100 flex-col gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleDownloadLocalDesktop}
               className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
             >
               <span>📥 Download to Desktop</span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSaveToDashboard}
               disabled={isSaving}
               className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-black rounded-xl text-xs transition shadow-md cursor-pointer"
             >
               {isSaving ? "Saving..." : <span>💾 Save to Dashboard</span>}
-            </button>
+            </motion.button>
           </div>
         </aside>
       </div>

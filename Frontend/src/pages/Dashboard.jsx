@@ -15,7 +15,21 @@ import { RiLoader4Line } from "react-icons/ri";
 import Navbar from "../components/Navbar";
 import logoImg from "../assets/logo1.png";
 import api from "../api/apiInstance.js";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react"; // 🌟 Imported motion and AnimatePresence
+
+// 🌟 Motion Variants Definitions
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
+};
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -86,7 +100,11 @@ export default function Dashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* DASHBOARD HERO HEADER */}
-        <header className="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
+        <motion.header 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6"
+        >
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-pink-600 uppercase mb-1">
               <MdDashboard className="animate-pulse" />
@@ -99,19 +117,26 @@ export default function Dashboard() {
               Studio Workspace Hub
             </h1>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => navigate("/generate")}
-            className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-pink-500 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-pink-500/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+            className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-pink-500 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-pink-500/20 hover:shadow-xl transition-all cursor-pointer"
           >
             <HiOutlineSparkles className="group-hover:rotate-12 transition-transform" />
             <span>Generate New Matrix</span>
-          </button>
-        </header>
+          </motion.button>
+        </motion.header>
 
         {/* TELEMETRY ANALYTICS PANEL */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
+        <motion.section 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12"
+        >
           {/* CARD 1: TOTAL INDEX */}
-          <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm relative overflow-hidden group hover:border-pink-300 transition-all duration-300">
+          <motion.div variants={itemVariants} className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm relative overflow-hidden group hover:border-pink-300 transition-colors duration-300">
             <div className="absolute top-0 right-0 p-4 opacity-10 text-slate-900 group-hover:scale-110 transition-transform">
               <FcBarChart size={64} />
             </div>
@@ -124,10 +149,10 @@ export default function Dashboard() {
             <p className="text-xs text-slate-500 mt-2">
               Active variants locked in DB
             </p>
-          </div>
+          </motion.div>
 
           {/* CARD 2: AVERAGE PERFORMANCE */}
-          <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm relative overflow-hidden group hover:border-purple-300 transition-all duration-300">
+          <motion.div variants={itemVariants} className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm relative overflow-hidden group hover:border-purple-300 transition-colors duration-300">
             <div className="absolute top-0 right-0 p-4 opacity-10 text-slate-900 group-hover:scale-110 transition-transform">
               <MdSpeed size={64} />
             </div>
@@ -138,15 +163,17 @@ export default function Dashboard() {
               {isLoading ? "---" : `${averagePredictiveCta}%`}
             </h3>
             <div className="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-1000"
-                style={{ width: `${isLoading ? 0 : averagePredictiveCta}%` }}
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${isLoading ? 0 : averagePredictiveCta}%` }}
+                transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-pink-500 to-purple-500"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* CARD 3: PEAK SCORE */}
-          <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm relative overflow-hidden group hover:border-emerald-300 transition-all duration-300">
+          <motion.div variants={itemVariants} className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm relative overflow-hidden group hover:border-emerald-300 transition-colors duration-300">
             <div className="absolute top-0 right-0 p-4 opacity-10 text-slate-900 group-hover:scale-110 transition-transform">
               <MdTrendingUp size={64} />
             </div>
@@ -159,8 +186,8 @@ export default function Dashboard() {
             <p className="text-xs text-emerald-600 font-medium mt-2 flex items-center gap-1">
               <span>★</span> Maximum click optimization achieved
             </p>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* GALLERY GRID MONITOR SECTOR */}
         <section>
@@ -174,7 +201,11 @@ export default function Dashboard() {
           </div>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-white border border-slate-200 rounded-3xl shadow-xs">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-20 bg-white border border-slate-200 rounded-3xl shadow-xs"
+            >
               <RiLoader4Line
                 size={40}
                 className="text-pink-500 animate-spin mb-3"
@@ -182,9 +213,13 @@ export default function Dashboard() {
               <p className="text-xs font-mono tracking-wider font-bold text-slate-400 uppercase animate-pulse">
                 Accessing remote media records...
               </p>
-            </div>
+            </motion.div>
           ) : projects.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-center py-16 px-4 bg-white border border-dashed border-slate-200 rounded-3xl">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center justify-center text-center py-16 px-4 bg-white border border-dashed border-slate-200 rounded-3xl"
+            >
               <div className="w-16 h-16 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center mb-4 text-2xl shadow-inner">
                 🎯
               </div>
@@ -195,118 +230,134 @@ export default function Dashboard() {
                 Your database layer is clear. Let's create an optimized
                 thumbnail using our Gemini workflows!
               </p>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => navigate("/generate")}
                 className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-sm cursor-pointer"
               >
                 Launch Generator Matrix
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           ) : (
-            /* 🌟 FIXED responsive columns mapping grid for cards layout safety */
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => {
-                const displayScore =
-                  project.ctaScore !== null ? project.ctaScore : 75;
-                return (
-                  <div
-                    key={project._id}
-                    className="group bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-                  >
-                    <div className="aspect-video bg-slate-900 overflow-hidden relative border-b border-slate-100">
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                      <div className="absolute top-3 right-3 drop-shadow-md z-10">
-                        <span
-                          className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-lg border flex items-center gap-1 ${
-                            displayScore >= 85
-                              ? "bg-emerald-500 border-emerald-400 text-white"
-                              : "bg-amber-500 border-amber-400 text-white"
-                          }`}
-                        >
-                          <MdSpeed size={12} />
-                          {displayScore}% CTA
-                        </span>
+            <motion.div 
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <AnimatePresence mode="popLayout">
+                {projects.map((project) => {
+                  const displayScore =
+                    project.ctaScore !== null ? project.ctaScore : 75;
+                  return (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                      transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                      key={project._id}
+                      className="group bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div className="aspect-video bg-slate-900 overflow-hidden relative border-b border-slate-100">
+                        <img
+                          src={project.imageUrl}
+                          alt={project.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-3 right-3 drop-shadow-md z-10">
+                          <span
+                            className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-lg border flex items-center gap-1 ${
+                              displayScore >= 85
+                                ? "bg-emerald-500 border-emerald-400 text-white"
+                                : "bg-amber-500 border-amber-400 text-white"
+                            }`}
+                          >
+                            <MdSpeed size={12} />
+                            {displayScore}% CTA
+                          </span>
+                        </div>
+
+                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() =>
+                              navigate("/canvas", {
+                                state: {
+                                  imageUrl: project.imageUrl,
+                                  dbRecordId: project._id,
+                                  title: project.title,
+                                  niche: project.niche,
+                                },
+                              })
+                            }
+                            className="bg-white/95 backdrop-blur-md hover:bg-pink-600 hover:text-white text-slate-900 font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <MdBrush size={14} /> Studio Editor
+                          </motion.button>
+                        </div>
                       </div>
 
-                      <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <button
-                          onClick={() =>
-                            navigate("/canvas", {
-                              state: {
-                                imageUrl: project.imageUrl,
-                                dbRecordId: project._id,
-                                title: project.title,
-                                niche: project.niche,
-                              },
-                            })
-                          }
-                          className="bg-white/95 backdrop-blur-md hover:bg-pink-600 hover:text-white text-slate-900 font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-md flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <MdBrush size={14} /> Studio Editor
-                        </button>
-                      </div>
-                    </div>
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        <div className="mb-4">
+                          <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-md">
+                            {project.niche || "General Media"}
+                          </span>
+                          <h3 className="font-bold text-sm text-slate-800 line-clamp-1 mt-1.5 group-hover:text-pink-600 transition">
+                            {project.title || "Untitled Visual Grid"}
+                          </h3>
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            Registered{" "}
+                            {new Date(project.createdAt).toLocaleDateString(
+                              undefined,
+                              { month: "short", day: "numeric" },
+                            )}
+                          </p>
+                        </div>
 
-                    <div className="p-4 flex-1 flex flex-col justify-between">
-                      <div className="mb-4">
-                        <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-pink-600 bg-pink-50 px-2 py-0.5 rounded-md">
-                          {project.niche || "General Media"}
-                        </span>
-                        <h3 className="font-bold text-sm text-slate-800 line-clamp-1 mt-1.5 group-hover:text-pink-600 transition">
-                          {project.title || "Untitled Visual Grid"}
-                        </h3>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
-                          Registered{" "}
-                          {new Date(project.createdAt).toLocaleDateString(
-                            undefined,
-                            { month: "short", day: "numeric" },
-                          )}
-                        </p>
-                      </div>
+                        <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
+                          <motion.button
+                            whileHover={{ y: -1, backgroundColor: "#f8fafc" }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() =>
+                              navigate("/cta-score", {
+                                state: {
+                                  imageUrl: project.imageUrl,
+                                  dbRecordId: project._id,
+                                  title: project.title,
+                                  niche: project.niche,
+                                },
+                              })
+                            }
+                            className="flex cursor-pointer items-center justify-center gap-1 py-2 px-1.5 bg-slate-50 text-slate-700 border border-slate-200 font-bold rounded-xl text-[11px] transition whitespace-nowrap"
+                          >
+                            <MdInsights
+                              size={13}
+                              className="text-purple-500 flex-shrink-0"
+                            />
+                            <span>Audit Data</span>
+                          </motion.button>
 
-                      {/* 🌟 FIXED: Kept grid-cols-2 but wrapped contents layout with safe padding for extra compressed devices */}
-                      <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
-                        <button
-                          onClick={() =>
-                            navigate("/cta-score", {
-                              state: {
-                                imageUrl: project.imageUrl,
-                                dbRecordId: project._id,
-                                title: project.title,
-                                niche: project.niche,
-                              },
-                            })
-                          }
-                          className="flex cursor-pointer items-center justify-center gap-1 py-2 px-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-xl text-[11px] transition whitespace-nowrap"
-                        >
-                          <MdInsights
-                            size={13}
-                            className="text-purple-500 flex-shrink-0"
-                          />
-                          <span>Audit Data</span>
-                        </button>
-
-                        <button
-                          onClick={(e) => handleDeleteProject(project._id, e)}
-                          className="flex cursor-pointer items-center justify-center gap-1 py-2 px-1.5 bg-rose-50/70 hover:bg-rose-100 text-rose-600 border border-rose-100 font-bold rounded-xl text-[11px] transition whitespace-nowrap"
-                        >
-                          <MdDeleteOutline
-                            size={13}
-                            className="flex-shrink-0"
-                          />
-                          <span>Purge</span>
-                        </button>
+                          <motion.button
+                            whileHover={{ y: -1, backgroundColor: "#fef2f2" }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={(e) => handleDeleteProject(project._id, e)}
+                            className="flex cursor-pointer items-center justify-center gap-1 py-2 px-1.5 bg-rose-50/70 text-rose-600 border border-rose-100 font-bold rounded-xl text-[11px] transition whitespace-nowrap"
+                          >
+                            <MdDeleteOutline
+                              size={13}
+                              className="flex-shrink-0"
+                            />
+                            <span>Purge</span>
+                          </motion.button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
           )}
         </section>
       </main>
