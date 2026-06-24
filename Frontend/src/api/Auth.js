@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:8000/api/auth";
+const API = "https://clixora-backend-eyob.onrender.com/api/auth";
 
 export const loginUser = async (userData) => {
     const response = await axios.post(`${API}/login`, userData);

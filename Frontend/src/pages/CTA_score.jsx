@@ -13,6 +13,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { RiLoader4Line } from "react-icons/ri";
 import api from "../api/apiInstance.js";
 import Navbar from "../components/Navbar";
+import { motion } from "motion/react"
 
 export default function CtaScore() {
   const location = useLocation();

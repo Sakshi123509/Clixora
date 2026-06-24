@@ -15,6 +15,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import api from "../api/apiInstance.js";
 import Navbar from "../components/Navbar.jsx";
 import logoImg from "../assets/logo1.png";
+import { motion } from "motion/react"
 
 const AVAILABLE_FONTS = [
   { name: "Impact Standard", value: "Impact, Charcoal, sans-serif" },
