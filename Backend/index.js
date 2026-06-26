@@ -24,16 +24,17 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    // origin: "http://localhost:5173",
-    // credentials: true,
+    origin: "http://localhost:5173" ||                // Local development ke liye
+        "https://clixora-omega.vercel.app",     // Aapka live Vercel frontend
+    credentials: true,
 }));
 
-app.get('/', (req, res) => {res.send("Welcome to Thumbnail generator Platform")});
+app.get('/', (req, res) => { res.send("Welcome to Thumbnail generator Platform") });
 
 app.use("/api/auth", authRoutes);
 app.use("/api/generate", generateRoutes);
 app.use("/api/thumbnails", thumbnailRoutes);
-app.use("/api/dashboard", dashboardRoutes); 
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/audit", aiAuditRoutes);
 
 

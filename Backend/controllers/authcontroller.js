@@ -8,11 +8,19 @@ export const register = async (req, res) => {
         const { username, email, password } = req.body;
 
         //check is this email already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "Email already exists" });
-        }
+        // PURANA CODE BADAL KAR YE RAKHO:
+        const existingUser = await User.findOne({
+            $or: [{ email: email }, { username: username }]
+        });
 
+        if (existingUser) {
+            if (existingUser.email === email) {
+                return res.status(400).json({ message: "Email already exists" });
+            }
+            if (existingUser.username === username) {
+                return res.status(400).json({ message: "Username is already taken" });
+            }
+        }
         //hash the password
         const hashedPassword = await bcrypt.hash(password, 10);//10 is the salt rounds
 
@@ -63,6 +71,14 @@ export const login = async (req, res) => {
             username: user.username
         });
         console.log("User logged in successfully", user);
+        // Backend login response ko aisa rakhein:
+        return res.status(200).json({
+            message: "Login successful",
+            token: token,
+            userId: user._id,
+            email: user.email,         
+            username: user.username    
+        });
     }
     catch (error) {
         res.status(500).json({ message: "Server error" });

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Deployment ke liye ise env variable bana sakte hain, abhi default backup backend URL rakha hai
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://clixora-backend-eyob.onrender.com/";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://clixora-backend-eyob.onrender.com";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
