@@ -27,11 +27,15 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
   const navigate = useNavigate();
 
-  useEffect(() => {
+useEffect(() => {
     const storedName = localStorage.getItem("userName");
-    const storedEmail = localStorage.getItem("userEmail") || localStorage.getItem("email");
+    let storedEmail = localStorage.getItem("userEmail") || localStorage.getItem("email");
 
-    if (storedName) {
+    if (storedEmail === "undefined" || storedEmail === "null") {
+      storedEmail = null;
+    }
+
+    if (storedName && storedName !== "undefined") {
       setUser({
         name: storedName,
         email: storedEmail || `${storedName.toLowerCase().replace(/\s+/g, "")}@clixora.ai`,

@@ -69,17 +69,20 @@ function LoginPage({ onSwitch, setLoading, setLoaderMessage }) {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!email || !pw) return alert("Please populate all credential fragments.");
+    if (!email || !pw)
+      return alert("Please populate all credential fragments.");
     setLoaderMessage("Authenticating standard cluster...");
     setLoading(true);
     try {
       const data = await loginUser({ email, password: pw });
-      if (data.token) {
-        localStorage.setItem("userEmail", data.email);
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.userId);
-        localStorage.setItem("userName", data.username);
-        navigate("/dashboard");
+      const resData = data.data || data; // Axios wrapper handle karne ke liye
+
+      if (resData.token) {
+        localStorage.setItem("token", resData.token);
+        localStorage.setItem("userId", resData.userId);
+        localStorage.setItem("userEmail", resData.email || ""); 
+        localStorage.setItem("userName", resData.username || "");
+        navigate("/");
       } else {
         alert(data.message || "Authentication aborted.");
       }
@@ -95,7 +98,11 @@ function LoginPage({ onSwitch, setLoading, setLoaderMessage }) {
       <div className="flex items-center gap-3 bg-slate-50/60 p-2.5 sm:p-3 rounded-2xl border border-slate-200/50">
         <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 p-0.5 shadow-sm flex-shrink-0">
           <div className="w-full h-full bg-white rounded-full flex items-center justify-center overflow-hidden">
-            <img src={logo} alt="Logo" className="w-8 h-8 sm:w-9 sm:h-9 object-contain" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
+            />
           </div>
         </div>
         <div className="min-w-0 flex-1">
@@ -175,14 +182,25 @@ function SignupPage({ onSwitch, setLoading, setLoaderMessage }) {
     if (pw !== confirm) return alert("Ciphers mismatch!");
     setLoaderMessage("Spawning new node framework...");
     setLoading(true);
+    // Upgraded handling inside handleRegister:
     try {
-      const data = await registerUser({ username: name, email, password: pw });
-      if (data.success || data.user || data.message) {
+      const res = await registerUser({ username: name, email, password: pw });
+
+      // Safe extraction whether registerUser returns the raw response or just data
+      const responseData = res.data || res;
+
+      if (
+        responseData.token ||
+        responseData.message === "User registered successfully"
+      ) {
         alert("Registration successfully committed! 🎉");
-        onSwitch();
+        onSwitch(); // Switches view back to login screen
       }
     } catch (err) {
-      alert("Registration pipeline failure.");
+      // Capture exactly what the backend complained about
+      const backendError =
+        err.response?.data?.message || "Registration pipeline failure.";
+      alert(backendError);
     } finally {
       setLoading(false);
     }
@@ -193,7 +211,11 @@ function SignupPage({ onSwitch, setLoading, setLoaderMessage }) {
       <div className="flex items-center gap-3 bg-slate-50/60 p-2.5 sm:p-3 rounded-2xl border border-slate-200/50">
         <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 p-0.5 shadow-sm flex-shrink-0">
           <div className="w-full h-full bg-white rounded-full flex items-center justify-center overflow-hidden">
-            <img src={logo} alt="Logo" className="w-8 h-8 sm:w-9 sm:h-9 object-contain" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
+            />
           </div>
         </div>
         <div className="min-w-0 flex-1">
@@ -290,19 +312,22 @@ export default function AuthPages() {
       {loading && <MatrixLoader message={loaderMessage} />}
 
       <div className="min-h-screen w-full bg-slate-50 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans select-none">
-        
         {/* Dynamic Mobile Blur Optimizations */}
         <div className="absolute top-[-10%] left-[-10%] w-[260px] sm:w-[500px] h-[260px] sm:h-[500px] rounded-full bg-pink-400/10 blur-[60px] sm:blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[260px] sm:w-[500px] h-[260px] sm:h-[500px] rounded-full bg-rose-400/10 blur-[60px] sm:blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-[350px] sm:max-w-[380px] flex flex-col my-auto">
-          
           {/* Header Title */}
           <div className="flex items-center gap-2 justify-center mb-5 sm:mb-6">
             <div className="flex gap-1">
-              {["bg-pink-500", "bg-rose-500", "bg-slate-400"].map((color, i) => (
-                <div key={i} className={`w-1.5 h-1.5 rounded-full ${color}`} />
-              ))}
+              {["bg-pink-500", "bg-rose-500", "bg-slate-400"].map(
+                (color, i) => (
+                  <div
+                    key={i}
+                    className={`w-1.5 h-1.5 rounded-full ${color}`}
+                  />
+                ),
+              )}
             </div>
             <span className="text-[10px] sm:text-[11px] font-mono font-black tracking-[0.25em] sm:tracking-[0.3em] text-slate-800 uppercase">
               Clixora Engine Matrix
